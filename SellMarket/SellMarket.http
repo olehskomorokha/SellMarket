@@ -1,0 +1,6 @@
+@SellMarket_HostAddress = http://localhost:5220
+
+GET {{SellMarket_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
