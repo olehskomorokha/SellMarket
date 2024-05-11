@@ -141,3 +141,4 @@ C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\refint\SellMa
 C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\SellMarket.pdb
 C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\SellMarket.genruntimeconfig.cache
 C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\ref\SellMarket.dll
+C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\SellMarket.sourcelink.json

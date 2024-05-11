@@ -1,4 +1,6 @@
-﻿namespace SellMarket.Model.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace SellMarket.Model.Entities
 {
     public class ProductCategory
     {
