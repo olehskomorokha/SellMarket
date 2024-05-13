@@ -10,7 +10,7 @@ namespace SellMarket.Model.Entities
         public int CustomerId { get; set; }
 
         public int OrderStateId { get; set; }
-        public string OrderDate {  get; set; }
+        public DateTime OrderDate {  get; set; }
 
         public User Customer { get; set; }
        

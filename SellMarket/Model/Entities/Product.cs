@@ -14,7 +14,7 @@ namespace SellMarket.Model.Entities
         public int ProductCategoryId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-
+        public DateTime DateOfPublish { get; set; }
         public string ImgURL { get; set; }
         public int ProductAmount { get; set; }
         public float Price { get; set; }
