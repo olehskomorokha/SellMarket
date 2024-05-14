@@ -24,8 +24,5 @@ namespace SellMarket.Model.Entities
         public virtual ProductCategory Category { get; set; }
         public virtual ProductDetails Details { get; set; }
 
-
-
-
     }
 }

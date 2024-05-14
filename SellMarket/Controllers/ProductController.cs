@@ -4,6 +4,7 @@ using SellMarket.Model.Entities;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SellMarket.Model.Models;
+using SellMarket.Model.Mappers;
 
 namespace SellMarket.Controllers
 {
@@ -30,8 +31,9 @@ namespace SellMarket.Controllers
             {
                 products = products.OrderBy(x => x.Price).ToList();
             }
-            
-            return products.Select(x => new ProductInfo(){Id = x.Id, Category = x.Category?.Category, SellerName = x.Seller?.NickName, Description = x.Description, Title = x.Title, Price = x.Price}).ToList();
+
+            //return products.Select(x => new ProductInfo(){Id = x.Id, Category = x.Category?.Category, SellerName = x.Seller?.NickName, Description = x.Description, Title = x.Title, Price = x.Price}).ToList();
+            return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
 
 

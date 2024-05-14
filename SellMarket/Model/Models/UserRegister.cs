@@ -1,6 +1,6 @@
 ﻿namespace SellMarket.Model.Models
 {
-    public class UserInfo
+    public class UserRegister
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

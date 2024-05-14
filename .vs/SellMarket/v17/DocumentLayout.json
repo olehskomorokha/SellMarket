@@ -3,20 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\olegs\\source\\repos\\SellMarket\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|C:\\Users\\olegs\\source\\repos\\SellMarket\\sellmarket\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|c:\\users\\olegs\\source\\repos\\sellmarket\\sellmarket\\model\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|C:\\Users\\olegs\\source\\repos\\SellMarket\\sellmarket\\model\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\model\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Migrations\\20240513213002_addPassworld.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:SellMarket\\Migrations\\20240513213002_addPassworld.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|C:\\Users\\olegs\\source\\repos\\SellMarket\\sellmarket\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +14,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,54 +26,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "20240513213002_addPassworld.cs",
-              "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Migrations\\20240513213002_addPassworld.cs",
-              "RelativeDocumentMoniker": "SellMarket\\Migrations\\20240513213002_addPassworld.cs",
-              "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Migrations\\20240513213002_addPassworld.cs",
-              "RelativeToolTip": "SellMarket\\Migrations\\20240513213002_addPassworld.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAiAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-13T21:30:02.334Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "User.cs",
               "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Model\\Entities\\User.cs",
               "RelativeDocumentMoniker": "SellMarket\\Model\\Entities\\User.cs",
               "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Model\\Entities\\User.cs",
               "RelativeToolTip": "SellMarket\\Model\\Entities\\User.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAAA1wA8AAAAsAAAA",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAkwBMAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-05-13T21:26:44.846Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "UserController.cs",
-              "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\UserController.cs",
-              "RelativeDocumentMoniker": "SellMarket\\Controllers\\UserController.cs",
-              "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\UserController.cs",
-              "RelativeToolTip": "SellMarket\\Controllers\\UserController.cs",
-              "ViewState": "AQIAAA0AAAAAAAAAAAAQwBMAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-12T12:51:33.423Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ProductController.cs",
-              "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\ProductController.cs",
-              "RelativeDocumentMoniker": "SellMarket\\Controllers\\ProductController.cs",
-              "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\ProductController.cs",
-              "RelativeToolTip": "SellMarket\\Controllers\\ProductController.cs",
-              "ViewState": "AQIAAA4AAAAAAAAAAAAxwBUAAAAtAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-12T12:51:23.597Z",
               "EditorCaption": ""
             }
           ]
