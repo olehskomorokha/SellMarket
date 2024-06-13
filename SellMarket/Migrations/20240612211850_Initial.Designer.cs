@@ -12,8 +12,8 @@ using SellMarket.Model.Data;
 namespace SellMarket.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20240513213002_addPassworld")]
-    partial class addPassworld
+    [Migration("20240612211850_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

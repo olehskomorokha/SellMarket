@@ -142,3 +142,4 @@ C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\SellMarket.pd
 C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\SellMarket.genruntimeconfig.cache
 C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\ref\SellMarket.dll
 C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\SellMarket.sourcelink.json
+C:\Users\olegs\source\repos\SellMarket\SellMarket\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

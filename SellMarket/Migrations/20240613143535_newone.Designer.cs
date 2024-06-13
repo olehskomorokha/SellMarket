@@ -12,8 +12,8 @@ using SellMarket.Model.Data;
 namespace SellMarket.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20240502203946_migrust")]
-    partial class migrust
+    [Migration("20240613143535_newone")]
+    partial class newone
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,22 +36,15 @@ namespace SellMarket.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("OrderDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("OrderStateId")
                         .HasColumnType("int");
 
-                    b.Property<string>("OrderStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("OrderStateId");
 
                     b.ToTable("Orders");
                 });
@@ -64,14 +57,24 @@ namespace SellMarket.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("DateOfPublish")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImgURL")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
-                    b.Property<int?>("ProductStateId")
+                    b.Property<int>("ProductAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductCategoryId")
                         .HasColumnType("int");
 
                     b.Property<int>("SellerId")
@@ -83,14 +86,14 @@ namespace SellMarket.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductStateId");
+                    b.HasIndex("ProductCategoryId");
 
                     b.HasIndex("SellerId");
 
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("SellMarket.Model.Entities.ProductState", b =>
+            modelBuilder.Entity("SellMarket.Model.Entities.ProductCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -98,13 +101,58 @@ namespace SellMarket.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("State")
+                    b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProductStates");
+                    b.ToTable("ProductCategories");
+                });
+
+            modelBuilder.Entity("SellMarket.Model.Entities.ProductCategoryDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CategoryDetail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductCategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductCategoryId");
+
+                    b.ToTable("ProductCategoryDetail");
+                });
+
+            modelBuilder.Entity("SellMarket.Model.Entities.ProductDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("ProductDetails");
                 });
 
             modelBuilder.Entity("SellMarket.Model.Entities.User", b =>
@@ -124,6 +172,10 @@ namespace SellMarket.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NickName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -178,22 +230,16 @@ namespace SellMarket.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SellMarket.Model.Entities.ProductState", "ProductState")
-                        .WithMany()
-                        .HasForeignKey("OrderStateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Customer");
-
-                    b.Navigation("ProductState");
                 });
 
             modelBuilder.Entity("SellMarket.Model.Entities.Product", b =>
                 {
-                    b.HasOne("SellMarket.Model.Entities.ProductState", null)
+                    b.HasOne("SellMarket.Model.Entities.ProductCategory", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("ProductStateId");
+                        .HasForeignKey("ProductCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SellMarket.Model.Entities.User", "Seller")
                         .WithMany("Products")
@@ -201,7 +247,31 @@ namespace SellMarket.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Category");
+
                     b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("SellMarket.Model.Entities.ProductCategoryDetail", b =>
+                {
+                    b.HasOne("SellMarket.Model.Entities.ProductCategory", "ProductCategory")
+                        .WithMany("ProductCategoryDetail")
+                        .HasForeignKey("ProductCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductCategory");
+                });
+
+            modelBuilder.Entity("SellMarket.Model.Entities.ProductDetails", b =>
+                {
+                    b.HasOne("SellMarket.Model.Entities.Product", "Product")
+                        .WithOne("Details")
+                        .HasForeignKey("SellMarket.Model.Entities.ProductDetails", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("SellMarket.Model.Entities.User", b =>
@@ -215,8 +285,16 @@ namespace SellMarket.Migrations
                     b.Navigation("UserAdress");
                 });
 
-            modelBuilder.Entity("SellMarket.Model.Entities.ProductState", b =>
+            modelBuilder.Entity("SellMarket.Model.Entities.Product", b =>
                 {
+                    b.Navigation("Details")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SellMarket.Model.Entities.ProductCategory", b =>
+                {
+                    b.Navigation("ProductCategoryDetail");
+
                     b.Navigation("Products");
                 });
 

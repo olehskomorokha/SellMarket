@@ -5,14 +5,18 @@
 namespace SellMarket.Migrations
 {
     /// <inheritdoc />
-    public partial class almost : Migration
+    public partial class newonewe : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "ProductAmount",
+                table: "Products");
+
             migrationBuilder.AddColumn<int>(
                 name: "ProductAmount",
-                table: "Products",
+                table: "Orders",
                 type: "int",
                 nullable: false,
                 defaultValue: 0);
@@ -23,7 +27,14 @@ namespace SellMarket.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "ProductAmount",
-                table: "Products");
+                table: "Orders");
+
+            migrationBuilder.AddColumn<int>(
+                name: "ProductAmount",
+                table: "Products",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
     }
 }
