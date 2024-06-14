@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SellMarket.Model.Data;
 
@@ -11,9 +12,11 @@ using SellMarket.Model.Data;
 namespace SellMarket.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    partial class StoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240613224644_allow")]
+    partial class allow
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -180,7 +183,7 @@ namespace SellMarket.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserAdressId")
+                    b.Property<int>("UserAdressId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserEmail")
@@ -275,7 +278,9 @@ namespace SellMarket.Migrations
                 {
                     b.HasOne("SellMarket.Model.Entities.UserAdress", "UserAdress")
                         .WithMany("Users")
-                        .HasForeignKey("UserAdressId");
+                        .HasForeignKey("UserAdressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("UserAdress");
                 });

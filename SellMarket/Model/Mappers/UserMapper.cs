@@ -9,11 +9,12 @@ namespace SellMarket.Model.Mappers
         {
             return new UserRegister
             {
-                Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                NickName = user.NickName,
                 Email = user.UserEmail,
-                PhoneNumber = user.PhoneNumber
+                Password = user.Password
             };
         }
         public static UserLogin MapToUserLogin(User user)

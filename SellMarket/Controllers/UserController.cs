@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SellMarket.Model.Data;
 using SellMarket.Model.Entities;
+using SellMarket.Model.Mappers;
 using SellMarket.Model.Models;
 
 namespace SellMarket.Controllers
@@ -15,11 +16,30 @@ namespace SellMarket.Controllers
             _context = context;
         }
 
-        [HttpPost("AddUser")]
-        public void AddUser(string Name, string LastName,string PassWorld, string Email, string PhoneNumber, string Nick)
+        [HttpPost("register")]
+        public async Task<ActionResult> AddUser(UserRegister user)
         {
-            var user = _context.Users.Add(new User {UserAdressId = 5, FirstName = Name, LastName = LastName,Password = PassWorld, UserEmail = Email, PhoneNumber = PhoneNumber, NickName = Nick});
-            _context.SaveChanges();
+            if (user == null)
+            {
+                return BadRequest("User data is null.");
+            }
+            if (string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName) ||
+            string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
+            {
+                return BadRequest("Missing required user information.");
+            }
+            var newuser = new User
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                NickName = user.NickName,
+                UserEmail = user.Email,
+                Password = user.Password
+            };
+            _context.Users.Add(newuser);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
     }
 }

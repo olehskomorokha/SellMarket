@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SellMarket.Model.Entities
 {
@@ -7,7 +8,8 @@ namespace SellMarket.Model.Entities
     {
         [Key]
         public int Id { get; set; }
-        public int UserAdressId { get; set; }
+        [AllowNull]
+        public int? UserAdressId { get; set; }
 
         public string FirstName { get; set; }
 

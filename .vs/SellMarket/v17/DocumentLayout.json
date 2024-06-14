@@ -1,7 +1,28 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\olegs\\source\\repos\\SellMarket\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|c:\\users\\olegs\\source\\repos\\sellmarket\\sellmarket\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|c:\\users\\olegs\\source\\repos\\sellmarket\\sellmarket\\model\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\model\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|c:\\users\\olegs\\source\\repos\\sellmarket\\sellmarket\\model\\mappers\\usermapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\model\\mappers\\usermapper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|c:\\users\\olegs\\source\\repos\\sellmarket\\sellmarket\\model\\models\\userregister.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\model\\models\\userregister.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|c:\\users\\olegs\\source\\repos\\sellmarket\\sellmarket\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -18,6 +39,71 @@
             {
               "$type": "Bookmark",
               "Name": "ST:916273320:0:{bf84ea66-d821-4dba-b1b1-2777d8574775}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Program.cs",
+              "RelativeDocumentMoniker": "SellMarket\\Program.cs",
+              "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Program.cs",
+              "RelativeToolTip": "SellMarket\\Program.cs",
+              "ViewState": "AQIAADkAAAAAAAAAAAAAAFUAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-14T11:20:51.598Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Model\\Entities\\User.cs",
+              "RelativeDocumentMoniker": "SellMarket\\Model\\Entities\\User.cs",
+              "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Model\\Entities\\User.cs",
+              "RelativeToolTip": "SellMarket\\Model\\Entities\\User.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAsAAAATAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-14T10:39:23.266Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserMapper.cs",
+              "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Model\\Mappers\\UserMapper.cs",
+              "RelativeDocumentMoniker": "SellMarket\\Model\\Mappers\\UserMapper.cs",
+              "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Model\\Mappers\\UserMapper.cs",
+              "RelativeToolTip": "SellMarket\\Model\\Mappers\\UserMapper.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAAcAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-14T10:38:17.012Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UserRegister.cs",
+              "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Model\\Models\\UserRegister.cs",
+              "RelativeDocumentMoniker": "SellMarket\\Model\\Models\\UserRegister.cs",
+              "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Model\\Models\\UserRegister.cs",
+              "RelativeToolTip": "SellMarket\\Model\\Models\\UserRegister.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-13T22:48:45.292Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "SellMarket\\Controllers\\UserController.cs",
+              "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\UserController.cs",
+              "RelativeToolTip": "SellMarket\\Controllers\\UserController.cs",
+              "ViewState": "AQIAABAAAAAAAAAAAAAQwCcAAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-13T22:44:26.257Z",
+              "EditorCaption": ""
             }
           ]
         },
