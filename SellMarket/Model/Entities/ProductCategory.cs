@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace SellMarket.Model.Entities
 {
@@ -6,8 +7,8 @@ namespace SellMarket.Model.Entities
     {
         public int Id { get; set; } 
         public string Category {  get; set; }
-        
-
+        public int? ParentCategoryId { get; set; }
+        public virtual ProductCategory ParentCategory { get; set; }
 
         public ICollection<ProductCategoryDetail> ProductCategoryDetail { get; set; }
         public ICollection<Product> Products { get; set; }

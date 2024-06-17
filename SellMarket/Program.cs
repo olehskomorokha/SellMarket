@@ -68,7 +68,8 @@ builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
     build.WithOrigins("http://127.0.0.1:5500").AllowAnyMethod().AllowAnyHeader();
 }));
 
-    
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -98,7 +99,6 @@ public class CustomSwaggerFilter : IDocumentFilter
         var nonMobileRoutes = swaggerDoc.Paths
             .Where(x => x.Key.ToLower().Contains("/api/"))
             .ToList();
-        nonMobileRoutes.ForEach(x => { swaggerDoc.Paths.Remove(x.Key); });
     }
 
 }

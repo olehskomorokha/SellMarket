@@ -65,7 +65,6 @@ namespace SellMarket.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImgURL")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Price")
@@ -102,7 +101,12 @@ namespace SellMarket.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ParentCategoryId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ParentCategoryId");
 
                     b.ToTable("ProductCategories");
                 });
@@ -126,7 +130,7 @@ namespace SellMarket.Migrations
 
                     b.HasIndex("ProductCategoryId");
 
-                    b.ToTable("ProductCategoryDetail");
+                    b.ToTable("ProductCategotyDetail");
                 });
 
             modelBuilder.Entity("SellMarket.Model.Entities.ProductDetails", b =>
@@ -247,6 +251,15 @@ namespace SellMarket.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("SellMarket.Model.Entities.ProductCategory", b =>
+                {
+                    b.HasOne("SellMarket.Model.Entities.ProductCategory", "ParentCategory")
+                        .WithMany()
+                        .HasForeignKey("ParentCategoryId");
+
+                    b.Navigation("ParentCategory");
                 });
 
             modelBuilder.Entity("SellMarket.Model.Entities.ProductCategoryDetail", b =>

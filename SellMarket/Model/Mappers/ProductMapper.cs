@@ -16,5 +16,21 @@ namespace SellMarket.Model.Models
                 Price = product.Price
             };
         }
+        public static ProductCategoryInfo MapToProductCategoryInfo(ProductCategory category)
+        {
+            return new ProductCategoryInfo
+            {
+                Id = category.Id,
+                Category = category.Category
+            };
+        }
+        public static ProductCategoryDetailInfo MapToProductCategoryDetailInfo(ProductCategoryDetail productCategoryDatail)
+        {
+            return new ProductCategoryDetailInfo
+            {
+                Id= productCategoryDatail.Id,
+                CategoryDetail = productCategoryDatail.CategoryDetail
+            };
+        }
     }
 }
