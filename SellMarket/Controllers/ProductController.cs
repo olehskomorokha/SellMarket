@@ -36,37 +36,35 @@ namespace SellMarket.Controllers
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
 
-        [Authorize]
         [HttpGet("GetProductCategory")]
         public List<ProductCategoryInfo> GetProductCategory()
         {
-            var Email = User.Claims.First(i => i.Type == ClaimTypes.Email).Value;
-            Console.WriteLine("User with email:"+ Email + " Try to get product category");
+            //var Email = User.Claims.First(i => i.Type == ClaimTypes.Email).Value;
+            //Console.WriteLine("User with email:"+ Email + " Try to get product category");
             var productCategories = _context.ProductCategories.Where(x => x.ParentCategoryId == null).ToList();
             return productCategories.Select(ProductMapper.MapToProductCategoryInfo).ToList();
         }
-
-        [HttpGet("GetProductCategoryDetail")]
-        public List<ProductCategoryDetailInfo> GetProductCategoryDetail(int Id)
+        [HttpGet("GetProductsByCategoryId")]
+        public List<ProductInfo> GetProductByCategoryId(int Id)
         {
-            var productCategoriDetail = _context.ProductCategotyDetail.Include(x => x.ProductCategory).Where(x => x.ProductCategoryId == Id).ToList();
-            return productCategoriDetail.Select(ProductMapper.MapToProductCategoryDetailInfo).ToList();
+            
+            var products = (from p in _context.Products
+                    join pc in _context.ProductCategories on p.ProductCategoryId equals pc.Id
+                    where pc.ParentCategoryId == Id
+                    select new ProductInfo { Title = p.Title, Description = p.Description, SellerName = p.Seller.NickName, Category = pc.Category, Price = p.Price }).ToList();
+            return products;
         }
-        [HttpGet("GetProductByDetailId")]
+
+        [HttpGet("GetProductBySubcategoryId")]
         public List<ProductInfo> GetProductByDetailId(int Id)
         {
             var productByDetail = (from p in _context.Products
                                   join Pc in _context.ProductCategories on p.Id equals Pc.Id
-                                  join PcD in _context.ProductCategotyDetail on Pc.Id equals PcD.Id
-                                  where PcD.Id == Id
+                                  where p.ProductCategoryId == Id
                                   select new ProductInfo {Title = p.Title, Description = p.Description, SellerName = p.Seller.NickName, Category = Pc.Category, Price = p.Price}).ToList();
 
-            var products = _context.Products.Include(x => x.Category).Where(x => x.ProductCategoryId == Id).ToList();
             return productByDetail;
         }
-
-
-
 
     }
   
