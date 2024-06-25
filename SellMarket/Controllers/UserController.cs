@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SellMarket.Model.Data;
@@ -19,7 +20,7 @@ namespace SellMarket.Controllers
     {
         private StoreDbContext _context;
         readonly IConfiguration _configuration;
-
+        private static List<string> _tokenBlacklist = new List<string>();
 
         public UserController(StoreDbContext context, IConfiguration configuration)
         {
@@ -28,7 +29,7 @@ namespace SellMarket.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<ActionResult> Register(UserRegister user)
         {
             if (user == null)
@@ -71,25 +72,30 @@ namespace SellMarket.Controllers
             return Ok(newUser);
         }
 
-        private string HashPassword(string password)
+        [HttpPost("login")]
+        public async Task<ActionResult> Login(UserLogin user)
         {
-            using (var sha256 = SHA256.Create())
+            var userPassword = _context.Users.FirstOrDefault(x => x.Password == HashPassword(user.Password));
+            var userEmail = _context.Users.FirstOrDefault(x => x.UserEmail == user.Email);
+            if (userPassword == null) 
             {
-                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                var builder = new StringBuilder();
-                foreach (var b in bytes)
-                {
-                    builder.Append(b.ToString("x2"));
-                }
-                return builder.ToString();
+                return BadRequest("Passworld incorrect");
             }
+            if (userEmail == null)
+            {
+                return BadRequest("Email incorrect");
+            }
+            var token = GetAccessToken(user.Email, user.Password);
+            return Ok(token);
         }
+
+        
         [HttpPost("GetAccessToken")]
-        public string GetAccessToken(string email, int id)
+        public string GetAccessToken(string email, string password)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, email), new Claim(ClaimTypes.Sid, id.ToString())
+                new Claim(ClaimTypes.Email, email), new Claim(ClaimTypes.Sid, password.ToString())
             };
             var jwt = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
@@ -103,6 +109,24 @@ namespace SellMarket.Controllers
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
 
+        [HttpGet("GetUserInfo")]
+        public string GetUserInfo()
+        {
+            return "123";
+        }
 
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var builder = new StringBuilder();
+                foreach (var b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
     }
 }

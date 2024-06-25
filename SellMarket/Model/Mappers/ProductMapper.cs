@@ -23,13 +23,6 @@ namespace SellMarket.Model.Models
                 Category = category.Category
             };
         }
-        public static ProductCategoryDetailInfo MapToProductCategoryDetailInfo(ProductCategoryDetail productCategoryDatail)
-        {
-            return new ProductCategoryDetailInfo
-            {
-                Id= productCategoryDatail.Id,
-                CategoryDetail = productCategoryDatail.CategoryDetail
-            };
-        }
+        
     }
 }

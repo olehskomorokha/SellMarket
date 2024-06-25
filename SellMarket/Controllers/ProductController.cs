@@ -44,6 +44,7 @@ namespace SellMarket.Controllers
             var productCategories = _context.ProductCategories.Where(x => x.ParentCategoryId == null).ToList();
             return productCategories.Select(ProductMapper.MapToProductCategoryInfo).ToList();
         }
+
         [HttpGet("GetProductsByCategoryId")]
         public List<ProductInfo> GetProductByCategoryId(int Id)
         {
@@ -54,7 +55,12 @@ namespace SellMarket.Controllers
                     select new ProductInfo { Title = p.Title, Description = p.Description, SellerName = p.Seller.NickName, Category = pc.Category, Price = p.Price }).ToList();
             return products;
         }
-
+        [HttpGet("GetSubcategoriesByCategoryId")]
+        public List<ProductCategoryInfo> GetSubcategoriesByCategoryId(int Id)
+        {
+            var subcategory = _context.ProductCategories.Where(x => x.ParentCategoryId == Id).ToList();
+            return subcategory.Select(ProductMapper.MapToProductCategoryInfo).ToList();
+        }
         [HttpGet("GetProductBySubcategoryId")]
         public List<ProductInfo> GetProductByDetailId(int Id)
         {
@@ -64,6 +70,34 @@ namespace SellMarket.Controllers
                                   select new ProductInfo {Title = p.Title, Description = p.Description, SellerName = p.Seller.NickName, Category = Pc.Category, Price = p.Price}).ToList();
 
             return productByDetail;
+        }
+
+        [HttpPost("addProduct")]
+        public Task<ActionResult> AddProduct(ProductInfo productInfo)
+        {
+            if(productInfo == null)
+            {
+                return BadRequest("Product not exist");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (string.IsNullOrEmpty(productInfo.Category) || string.IsNullOrEmpty(productInfo.Title) ||
+                string.IsNullOrEmpty(productInfo.Description)|| string.IsNullOrEmpty(productInfo.SellerName))
+            {
+                return BadRequest("Missing required product information.");
+            }
+            
+            var newProduct = new Product
+            {
+                Title = productInfo.Title,
+                Description = productInfo.Description,
+                Seller = productInfo.SellerName,
+                Price = productInfo.Price,
+
+            };
+            return Ok(newProduct);
         }
 
     }
