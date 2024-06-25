@@ -7,6 +7,7 @@ using SellMarket.Model.Models;
 using SellMarket.Model.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace SellMarket.Controllers
 {
@@ -71,35 +72,41 @@ namespace SellMarket.Controllers
 
             return productByDetail;
         }
-
+        [Authorize]
         [HttpPost("addProduct")]
-        public Task<ActionResult> AddProduct(ProductInfo productInfo)
+        public async Task<ActionResult> AddProduct(AddProductModel productInfo)
         {
-            if(productInfo == null)
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrEmpty(email))
             {
-                return BadRequest("Product not exist");
+                return Unauthorized();
             }
-            if (!ModelState.IsValid)
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == email);
+
+            if (user == null)
             {
-                return BadRequest(ModelState);
+                return Unauthorized();
             }
-            if (string.IsNullOrEmpty(productInfo.Category) || string.IsNullOrEmpty(productInfo.Title) ||
-                string.IsNullOrEmpty(productInfo.Description)|| string.IsNullOrEmpty(productInfo.SellerName))
-            {
-                return BadRequest("Missing required product information.");
-            }
-            
+
             var newProduct = new Product
             {
                 Title = productInfo.Title,
                 Description = productInfo.Description,
-                Seller = productInfo.SellerName,
+                SellerId = user.Id,
+                DateOfPublish = DateTime.Now,
+                ImgURL = productInfo.ImgURL,
+                ProductCategoryId = productInfo.Category,
                 Price = productInfo.Price,
-
             };
+
+            _context.Products.Add(newProduct);
+            await _context.SaveChangesAsync();
+
             return Ok(newProduct);
         }
 
     }
-  
+
 }
