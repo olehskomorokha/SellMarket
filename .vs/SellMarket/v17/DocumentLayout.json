@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\olegs\\source\\repos\\SellMarket\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|c:\\users\\olegs\\source\\repos\\sellmarket\\sellmarket\\controllers\\storagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\controllers\\storagecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|c:\\users\\olegs\\source\\repos\\sellmarket\\sellmarket\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{06E56512-DDC2-4CE5-B161-38456DF07067}|SellMarket\\SellMarket.csproj|solutionrelative:sellmarket\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -27,12 +31,25 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "StorageController.cs",
+              "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\StorageController.cs",
+              "RelativeDocumentMoniker": "SellMarket\\Controllers\\StorageController.cs",
+              "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\StorageController.cs",
+              "RelativeToolTip": "SellMarket\\Controllers\\StorageController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-27T11:48:23.977Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "ProductController.cs",
               "DocumentMoniker": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\ProductController.cs",
               "RelativeDocumentMoniker": "SellMarket\\Controllers\\ProductController.cs",
               "ToolTip": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\Controllers\\ProductController.cs",
               "RelativeToolTip": "SellMarket\\Controllers\\ProductController.cs",
-              "ViewState": "AQIAAEEAAAAAAAAAAAAqwEwAAAA0AAAA",
+              "ViewState": "AQIAAEEAAAAAAAAAAAA8wEwAAAA0AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-26T14:11:46.652Z",
               "EditorCaption": ""
