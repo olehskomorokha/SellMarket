@@ -1,6 +1,9 @@
-﻿
+﻿using System.Security.Claims;
 using Google.Cloud.Storage.V1;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SellMarket.Model.Data;
 
 namespace SellMarket.Controllers
 {
@@ -8,44 +11,46 @@ namespace SellMarket.Controllers
     [Route("api/[controller]")]
     public class StorageController : ControllerBase
     {
-        private readonly ILogger<StorageController> _logger;
-        public StorageController(ILogger<StorageController> logger)
+        private StoreDbContext _context;
+        public StorageController(StoreDbContext context)
         {
-            _logger = logger;
+            _context = context;
         }
         
         private readonly string _bucketName = "sellmarketstorage";
         private readonly string _projectId = "hopeful-text-427709-g2";
         private readonly string _serviceAccountKeyPath = "D:\\Rider\\hopeful-text-427709-g2-b8ed2fc88a61.json";
-
-        [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
+        
+        
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadImage(IFormFileCollection files)
+        {  
+            if (files == null || files.Count == 0)
             {
-                return Content("file not selected");
+                return BadRequest("No files received.");
             }
-
+                
             try
-            {
-                // Initialize the Google Cloud Storage client
+            {   
                 var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
-            
-                // Generate a unique name for the file to avoid overwriting
-                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var fileUrls = new List<string>();
 
-                // Upload the file to Google Cloud Storage
-                using (var stream = file.OpenReadStream())
+                foreach (var file in files)
                 {
-                    await storageClient.UploadObjectAsync(_bucketName, uniqueFileName, "image/png", stream);
-                }
+                    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    using (var stream = file.OpenReadStream())
+                    {
+                        await storageClient.UploadObjectAsync(_bucketName, uniqueFileName, file.ContentType, stream);
+                    }   
 
-                return Content("File uploaded successfully: " + uniqueFileName);
+                    var fileUrl = $"https://storage.googleapis.com/{_bucketName}/{uniqueFileName}";
+                    fileUrls.Add(fileUrl);
+                }
+                return Ok(new { FileUrls = fileUrls });
             }
             catch (Exception ex)
             {
-                // Handle errors
-                return Content("An error occurred: " + ex.Message);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
     }

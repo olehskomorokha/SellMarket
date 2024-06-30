@@ -7,6 +7,7 @@ using SellMarket.Model.Models;
 using SellMarket.Model.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Identity;
 
 namespace SellMarket.Controllers
@@ -16,6 +17,11 @@ namespace SellMarket.Controllers
     public class ProductController : Controller
     {
         private StoreDbContext _context;
+        
+        // bucket configuring property
+        private readonly string _bucketName = "sellmarketstorage";
+        private readonly string _projectId = "hopeful-text-427709-g2";
+        private readonly string _serviceAccountKeyPath = "D:\\Rider\\hopeful-text-427709-g2-b8ed2fc88a61.json";
 
         public ProductController(StoreDbContext context)
         {
@@ -74,17 +80,35 @@ namespace SellMarket.Controllers
         }
         [Authorize]
         [HttpPost("addProduct")]
-        public async Task<ActionResult> AddProduct(AddProductModel productInfo)
+        public async Task<ActionResult> AddProduct([FromForm] AddProductModel productInfo, [FromForm] IFormFileCollection files)
         {
+            // image store state
+            var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
+            var fileUrls = new List<string>();
+
+            foreach (var file in files)
+            {
+                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                using (var stream = file.OpenReadStream())
+                {
+                    await storageClient.UploadObjectAsync(_bucketName, uniqueFileName, file.ContentType, stream);
+                }   
+
+                var fileUrl = $"https://storage.googleapis.com/{_bucketName}/{uniqueFileName}";
+                fileUrls.Add(fileUrl);
+            }
+            
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
 
             if (string.IsNullOrEmpty(email))
             {
                 return Unauthorized();
             }
+            
+
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == email);
-
+            
             if (user == null)
             {
                 return Unauthorized();
@@ -96,7 +120,7 @@ namespace SellMarket.Controllers
                 Description = productInfo.Description,
                 SellerId = user.Id,
                 DateOfPublish = DateTime.Now,
-                ImgURL = productInfo.ImgURL,
+                ImgURL = string.Join(",", fileUrls),
                 ProductCategoryId = productInfo.Category,
                 Price = productInfo.Price,
             };
@@ -105,6 +129,7 @@ namespace SellMarket.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(newProduct);
+            
         }
 
     }
