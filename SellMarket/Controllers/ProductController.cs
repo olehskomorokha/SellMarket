@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SellMarket.Model.Data;
 using SellMarket.Model.Entities;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SellMarket.Model.Models;
-using SellMarket.Model.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Google.Cloud.Storage.V1;
-using Microsoft.AspNetCore.Identity;
 
 namespace SellMarket.Controllers
 {
@@ -20,13 +17,13 @@ namespace SellMarket.Controllers
         
         // bucket configuring property
         private readonly string _bucketName = "sellmarketstorage";
-        private readonly string _projectId = "hopeful-text-427709-g2";
+        // private readonly string _projectId = "hopeful-text-427709-g2";
         private readonly string _serviceAccountKeyPath = "D:\\Rider\\hopeful-text-427709-g2-b8ed2fc88a61.json";
 
         public ProductController(StoreDbContext context)
         {
             _context = context;
-        }
+            }
 
         [HttpGet("GetAllProduct")]
         public List<ProductInfo> GetAll()
@@ -35,11 +32,11 @@ namespace SellMarket.Controllers
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
 
-        [HttpGet("GetAllProductById")]
+        [HttpGet("GetAllProductBySubcategoryId")]
         [ProducesResponseType(typeof(Product), 200)] // Specify the expected response type
-        public List<ProductInfo> GetAllProduct(int Id)
+        public List<ProductInfo> GetAllProductBySubcategoryId(int id)
         {
-            var products = _context.Products.Include(x => x.Seller).Include(x => x.Category).Where(p => p.ProductCategoryId == Id).ToList();
+            var products = _context.Products.Include(x => x.Seller).Include(x => x.Category).Where(p => p.ProductCategoryId == id).ToList();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
 
@@ -53,31 +50,22 @@ namespace SellMarket.Controllers
         }
 
         [HttpGet("GetProductsByCategoryId")]
-        public List<ProductInfo> GetProductByCategoryId(int Id)
+        public List<ProductInfo> GetProductByCategoryId(int id)
         {
             
             var products = (from p in _context.Products
                     join pc in _context.ProductCategories on p.ProductCategoryId equals pc.Id
-                    where pc.ParentCategoryId == Id
+                    where pc.ParentCategoryId == id
                     select new ProductInfo { Title = p.Title, Description = p.Description, SellerName = p.Seller.NickName, Category = pc.Category, Price = p.Price }).ToList();
             return products;
         }
         [HttpGet("GetSubcategoriesByCategoryId")]
-        public List<ProductCategoryInfo> GetSubcategoriesByCategoryId(int Id)
+        public List<ProductCategoryInfo> GetSubcategoriesByCategoryId(int id)
         {
-            var subcategory = _context.ProductCategories.Where(x => x.ParentCategoryId == Id).ToList();
+            var subcategory = _context.ProductCategories.Where(x => x.ParentCategoryId == id).ToList();
             return subcategory.Select(ProductMapper.MapToProductCategoryInfo).ToList();
         }
-        [HttpGet("GetProductBySubcategoryId")]
-        public List<ProductInfo> GetProductByDetailId(int Id)
-        {
-            var productByDetail = (from p in _context.Products
-                                  join Pc in _context.ProductCategories on p.Id equals Pc.Id
-                                  where p.ProductCategoryId == Id
-                                  select new ProductInfo {Title = p.Title, Description = p.Description, SellerName = p.Seller.NickName, Category = Pc.Category, Price = p.Price}).ToList();
-
-            return productByDetail;
-        }
+        
         [Authorize]
         [HttpPost("addProduct")]
         public async Task<ActionResult> AddProduct([FromForm] AddProductModel productInfo, [FromForm] IFormFileCollection files)
@@ -105,8 +93,6 @@ namespace SellMarket.Controllers
                 return Unauthorized();
             }
             
-
-
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == email);
             
             if (user == null)
@@ -129,9 +115,34 @@ namespace SellMarket.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(newProduct);
-            
         }
 
+        [HttpGet("GetProductByTitle")]
+        public List<ProductInfo> GetProductByTitle(string keyWord)
+        {
+            var products = _context.Products.Where(x => x.Title.Contains(keyWord)).ToList();
+            return products.Select(ProductMapper.MapToProductInfo).ToList();
+        }
+        [HttpGet("GetAllProductBySubcategoryWithFilterId")]
+        public List<ProductInfo> GetAllProductBySubcategoryWithFilterId(int id, int? minPrice, int? maxPrice)
+        {
+            var query = _context.Products.Include(x => x.Category).AsQueryable();
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => p.ProductCategoryId == id && p.Price > minPrice);
+            }
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.ProductCategoryId == id && p.Price < maxPrice);
+            }
+            if (minPrice.HasValue && maxPrice.HasValue)
+            {
+                query = query.Where(p => p.ProductCategoryId == id && p.Price > minPrice && p.Price < maxPrice);
+            }
+            var products = query.ToList();
+            return products.Select(ProductMapper.MapToProductInfo).ToList();
+        }
+        
     }
 
 }
