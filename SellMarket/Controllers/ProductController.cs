@@ -124,9 +124,24 @@ namespace SellMarket.Controllers
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
         [HttpGet("GetAllProductBySubcategoryWithFilterId")]
-        public List<ProductInfo> GetAllProductBySubcategoryWithFilterId(int id, int? minPrice, int? maxPrice)
+        public List<ProductInfo> GetAllProductBySubcategoryWithFilterId(int id, int? minPrice, int? maxPrice, string? sortType)
         {
             var query = _context.Products.Include(x => x.Category).AsQueryable();
+            switch (sortType)
+            {
+                case "price":
+                    query = query.OrderBy(x => x.Price);
+                    break;
+                case "-price":
+                    query = query.OrderByDescending(x => x.Price);
+                    break;
+                case "-date_created":
+                    query = query.OrderByDescending(x => x.DateOfPublish);
+                    break;
+                default:
+                    query = query.OrderBy(x => x.Id); // Assuming "position" means the order of ID or a default order
+                    break;
+            }
             if (minPrice.HasValue)
             {
                 query = query.Where(p => p.ProductCategoryId == id && p.Price > minPrice);
@@ -139,6 +154,7 @@ namespace SellMarket.Controllers
             {
                 query = query.Where(p => p.ProductCategoryId == id && p.Price > minPrice && p.Price < maxPrice);
             }
+            
             var products = query.ToList();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
