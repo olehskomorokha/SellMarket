@@ -8,6 +8,7 @@ namespace SellMarket.Model.Models
         {
             return new ProductInfo
             {
+                Id = product.Id,
                 Title = product.Title,
                 Description = product.Description,
                 SellerName = product.Seller?.NickName,

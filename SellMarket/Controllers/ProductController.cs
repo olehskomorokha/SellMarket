@@ -158,7 +158,13 @@ namespace SellMarket.Controllers
             var products = query.ToList();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
-        
+
+        [HttpGet("GetProductImg")]
+        public List<string?> GetProductImg(int productId)
+        {
+            var images = _context.Products.Where(x => x.Id == productId);
+            return images.Select(x => x.ImgURL).ToList();
+        }
     }
 
 }
