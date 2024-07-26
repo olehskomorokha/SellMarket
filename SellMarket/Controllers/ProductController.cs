@@ -142,17 +142,18 @@ namespace SellMarket.Controllers
                     query = query.OrderBy(x => x.Id); // Assuming "position" means the order of ID or a default order
                     break;
             }
+            query = query.Where(p => p.ProductCategoryId == id);
             if (minPrice.HasValue)
             {
-                query = query.Where(p => p.ProductCategoryId == id && p.Price > minPrice);
+                query = query.Where(p => p.Price > minPrice);
             }
             if (maxPrice.HasValue)
             {
-                query = query.Where(p => p.ProductCategoryId == id && p.Price < maxPrice);
+                query = query.Where(p => p.Price < maxPrice);
             }
             if (minPrice.HasValue && maxPrice.HasValue)
             {
-                query = query.Where(p => p.ProductCategoryId == id && p.Price > minPrice && p.Price < maxPrice);
+                query = query.Where(p => p.Price > minPrice && p.Price < maxPrice);
             }
             
             var products = query.ToList();
