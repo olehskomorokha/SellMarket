@@ -20,7 +20,6 @@ namespace SellMarket.Model.Data
         public DbSet<Order> Orders { get; set; }
 
         public DbSet<ProductDetails> ProductDetails { get; set; }
-        public DbSet<ProductCategoryDetail> ProductCategotyDetail { get; set; }
     }
 
 }

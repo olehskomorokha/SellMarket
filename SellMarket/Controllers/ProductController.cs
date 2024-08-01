@@ -23,7 +23,7 @@ namespace SellMarket.Controllers
         public ProductController(StoreDbContext context)
         {
             _context = context;
-            }
+        }
 
         [HttpGet("GetAllProduct")]
         public List<ProductInfo> GetAll()
@@ -165,6 +165,20 @@ namespace SellMarket.Controllers
         {
             var images = _context.Products.Where(x => x.Id == productId);
             return images.Select(x => x.ImgURL).ToList();
+        }
+
+        [HttpGet("GetNewProduct")]
+        public List<ProductInfo> GetNewProduct()
+        {
+            var product = _context.Products.OrderBy(x => x.DateOfPublish).ToList();
+            return product.Select(ProductMapper.MapToProductInfo).ToList();
+        }
+
+        [HttpGet("GetUserPosts")]
+        public List<ProductInfo> GetUserPosts(int id)
+        {
+            var product = _context.Products.Where(x => x.SellerId == id).ToList();
+            return product.Select(ProductMapper.MapToProductInfo).ToList();
         }
     }
 

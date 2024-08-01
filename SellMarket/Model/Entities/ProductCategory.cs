@@ -10,7 +10,6 @@ namespace SellMarket.Model.Entities
         public int? ParentCategoryId { get; set; }
         public virtual ProductCategory ParentCategory { get; set; }
 
-        public ICollection<ProductCategoryDetail> ProductCategoryDetail { get; set; }
         public ICollection<Product> Products { get; set; }
     }
 }
