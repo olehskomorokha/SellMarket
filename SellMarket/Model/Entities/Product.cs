@@ -15,7 +15,7 @@ namespace SellMarket.Model.Entities
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DateOfPublish { get; set; }
-        public string? ImgURL { get; set; }
+        public string ImgURL { get; set; }
         public float Price { get; set; }
         [JsonIgnore]
         public virtual User Seller { get; set; }

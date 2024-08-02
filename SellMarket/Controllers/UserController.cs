@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SellMarket.Model.Data;
 using SellMarket.Model.Entities;
-using SellMarket.Model.Mappers;
 using SellMarket.Model.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -20,9 +18,9 @@ namespace SellMarket.Controllers
     {
         private StoreDbContext _context;
         readonly IConfiguration _configuration;
-        private static List<string> _tokenBlacklist = new List<string>();
+        // private static List<string> _tokenBlacklist = new List<string>();
 
-        public UserController(StoreDbContext context, IConfiguration configuration)
+        public UserController (StoreDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
@@ -75,8 +73,8 @@ namespace SellMarket.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login(UserLogin user)
         {
-            var userPassword = _context.Users.FirstOrDefault(x => x.Password == HashPassword(user.Password));
-            var userEmail = _context.Users.FirstOrDefault(x => x.UserEmail == user.Email);
+            var userPassword = await _context.Users.FirstOrDefaultAsync(x => x.Password == HashPassword(user.Password));
+            var userEmail = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == user.Email);
             if (userPassword == null) 
             {
                 return BadRequest("Passworld incorrect");
@@ -95,7 +93,7 @@ namespace SellMarket.Controllers
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, email), new Claim(ClaimTypes.Sid, password.ToString())
+                new Claim(ClaimTypes.Email, email), new Claim(ClaimTypes.Sid, password)
             };
             var jwt = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
@@ -108,13 +106,6 @@ namespace SellMarket.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
-
-        [HttpGet("GetUserInfo")]
-        public string GetUserInfo()
-        {
-            return "123";
-        }
-
         private string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())

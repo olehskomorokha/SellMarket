@@ -26,43 +26,50 @@ namespace SellMarket.Controllers
         }
 
         [HttpGet("GetAllProduct")]
-        public List<ProductInfo> GetAll()
+        public async Task<List<ProductInfo>> GetAll()
         {
-            var products = _context.Products.Include(x => x.Seller).Include(x => x.Category).ToList();
+            var products = await _context.Products.Include(x => x.Seller).Include(x => x.Category).ToListAsync();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
 
         [HttpGet("GetAllProductBySubcategoryId")]
         [ProducesResponseType(typeof(Product), 200)] // Specify the expected response type
-        public List<ProductInfo> GetAllProductBySubcategoryId(int id)
+        public async Task<List<ProductInfo>> GetAllProductBySubcategoryId(int id)
         {
-            var products = _context.Products.Include(x => x.Seller).Include(x => x.Category).Where(p => p.ProductCategoryId == id).ToList();
+            var products = await _context.Products.Include(x => x.Seller).Include(x => x.Category).Where(p => p.ProductCategoryId == id).ToListAsync();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
 
         [HttpGet("GetProductCategory")]
-        public List<ProductCategoryInfo> GetProductCategory()
+        public async Task<List<ProductCategoryInfo>> GetProductCategory()
         {
             //var Email = User.Claims.First(i => i.Type == ClaimTypes.Email).Value;
             //Console.WriteLine("User with email:"+ Email + " Try to get product category");
-            var productCategories = _context.ProductCategories.Where(x => x.ParentCategoryId == null).ToList();
+            var productCategories = await _context.ProductCategories.Where(x => x.ParentCategoryId == null).ToListAsync();
             return productCategories.Select(ProductMapper.MapToProductCategoryInfo).ToList();
-        }
+        }   
 
         [HttpGet("GetProductsByCategoryId")]
-        public List<ProductInfo> GetProductByCategoryId(int id)
+        public async Task<List<ProductInfo>> GetProductByCategoryId(int id)
         {
-            
-            var products = (from p in _context.Products
-                    join pc in _context.ProductCategories on p.ProductCategoryId equals pc.Id
-                    where pc.ParentCategoryId == id
-                    select new ProductInfo { Title = p.Title, Description = p.Description, SellerName = p.Seller.NickName, Category = pc.Category, Price = p.Price }).ToList();
+            var products = await (from p in _context.Products
+                join pc in _context.ProductCategories on p.ProductCategoryId equals pc.Id
+                where pc.ParentCategoryId == id
+                select new ProductInfo 
+                { 
+                    Title = p.Title, 
+                    Description = p.Description, 
+                    SellerName = p.Seller.NickName, 
+                    Category = pc.Category, 
+                    Price = p.Price 
+                }).ToListAsync();
+
             return products;
         }
         [HttpGet("GetSubcategoriesByCategoryId")]
-        public List<ProductCategoryInfo> GetSubcategoriesByCategoryId(int id)
+        public async Task<List<ProductCategoryInfo>> GetSubcategoriesByCategoryId(int id)
         {
-            var subcategory = _context.ProductCategories.Where(x => x.ParentCategoryId == id).ToList();
+            var subcategory = await _context.ProductCategories.Where(x => x.ParentCategoryId == id).ToListAsync();
             return subcategory.Select(ProductMapper.MapToProductCategoryInfo).ToList();
         }
         
@@ -118,13 +125,13 @@ namespace SellMarket.Controllers
         }
 
         [HttpGet("GetProductByTitle")]
-        public List<ProductInfo> GetProductByTitle(string keyWord)
+        public async Task<List<ProductInfo>> GetProductByTitle(string keyWord)
         {
-            var products = _context.Products.Where(x => x.Title.Contains(keyWord)).ToList();
+            var products = await _context.Products.Where(x => x.Title.Contains(keyWord)).ToListAsync();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
         [HttpGet("GetAllProductBySubcategoryWithFilterId")]
-        public List<ProductInfo> GetAllProductBySubcategoryWithFilterId(int id, int? minPrice, int? maxPrice, string? sortType)
+        public async Task<List<ProductInfo>> GetAllProductBySubcategoryWithFilterId(int id, int? minPrice, int? maxPrice, string? sortType)
         {
             var query = _context.Products.Include(x => x.Category).AsQueryable();
             switch (sortType)
@@ -156,28 +163,29 @@ namespace SellMarket.Controllers
                 query = query.Where(p => p.Price > minPrice && p.Price < maxPrice);
             }
             
-            var products = query.ToList();
+            var products = await query.ToListAsync();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
 
         [HttpGet("GetProductImg")]
-        public List<string?> GetProductImg(int productId)
+        public async Task<IEnumerable<string>> GetProductImg(int productId)
         {
-            var images = _context.Products.Where(x => x.Id == productId);
-            return images.Select(x => x.ImgURL).ToList();
+            var images = await _context.Products.Where(x => x.Id == productId).ToListAsync();
+            return images.Select(x => x.ImgURL);
         }
 
         [HttpGet("GetNewProduct")]
-        public List<ProductInfo> GetNewProduct()
+        public async Task<List<ProductInfo>> GetNewProduct()
         {
-            var product = _context.Products.OrderBy(x => x.DateOfPublish).ToList();
+            var product = await _context.Products.OrderBy(x => x.DateOfPublish).ToListAsync();
+            
             return product.Select(ProductMapper.MapToProductInfo).ToList();
         }
 
         [HttpGet("GetUserPosts")]
-        public List<ProductInfo> GetUserPosts(int id)
+        public async Task<List<ProductInfo>> GetUserPosts(int id)
         {
-            var product = _context.Products.Where(x => x.SellerId == id).ToList();
+            var product = await _context.Products.Where(x => x.SellerId == id).ToListAsync();
             return product.Select(ProductMapper.MapToProductInfo).ToList();
         }
     }
