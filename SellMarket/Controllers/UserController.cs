@@ -8,6 +8,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using SellMarket.Services;
 
 namespace SellMarket.Controllers
 {
@@ -18,15 +20,24 @@ namespace SellMarket.Controllers
     {
         private StoreDbContext _context;
         readonly IConfiguration _configuration;
+
+        private readonly IUserService _userService;
         // private static List<string> _tokenBlacklist = new List<string>();
 
-        public UserController (StoreDbContext context, IConfiguration configuration)
+        public UserController (StoreDbContext context, IConfiguration configuration, IUserService userService)
         {
+            _userService = userService;
             _context = context;
             _configuration = configuration;
 
         }
 
+        [HttpGet, Authorize]
+        public ActionResult<string> GetMyEmail()
+        {
+            return Ok(_userService.GetMyEmail());
+        }
+        
         [HttpPost("Register")]
         public async Task<ActionResult> Register(UserRegister user)
         {
@@ -93,7 +104,8 @@ namespace SellMarket.Controllers
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, email), new Claim(ClaimTypes.Sid, password)
+                new Claim(ClaimTypes.Email, email), 
+                new Claim(ClaimTypes.Sid, password)
             };
             var jwt = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],

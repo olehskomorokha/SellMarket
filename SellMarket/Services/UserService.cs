@@ -1,0 +1,26 @@
+﻿using System.Security.Claims;
+
+namespace SellMarket.Services
+{
+    public class UserService : IUserService
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public UserService (IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+        public string GetMyEmail()
+        {
+            var result = string.Empty;
+            if (_httpContextAccessor.HttpContext is not null)
+            {
+                var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email);
+                result = claim?.Value.Trim();
+            }
+
+            return result;
+        }
+    } 
+}
+
