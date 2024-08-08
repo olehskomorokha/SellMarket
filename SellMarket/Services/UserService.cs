@@ -18,7 +18,6 @@ namespace SellMarket.Services
                 var claim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Email);
                 result = claim?.Value.Trim();
             }
-
             return result;
         }
     } 

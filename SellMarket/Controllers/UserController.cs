@@ -21,23 +21,16 @@ namespace SellMarket.Controllers
         private StoreDbContext _context;
         readonly IConfiguration _configuration;
 
-        private readonly IUserService _userService;
         // private static List<string> _tokenBlacklist = new List<string>();
 
         public UserController (StoreDbContext context, IConfiguration configuration, IUserService userService)
         {
-            _userService = userService;
             _context = context;
             _configuration = configuration;
 
         }
 
-        [HttpGet, Authorize]
-        public ActionResult<string> GetMyEmail()
-        {
-            return Ok(_userService.GetMyEmail());
-        }
-        
+
         [HttpPost("Register")]
         public async Task<ActionResult> Register(UserRegister user)
         {

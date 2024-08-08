@@ -6,6 +6,7 @@ using SellMarket.Model.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Google.Cloud.Storage.V1;
+using SellMarket.Services;
 
 namespace SellMarket.Controllers
 {
@@ -14,15 +15,17 @@ namespace SellMarket.Controllers
     public class ProductController : Controller
     {
         private StoreDbContext _context;
+        private readonly IUserService _userService;
         
         // bucket configuring property
         private readonly string _bucketName = "sellmarketstorage";
         // private readonly string _projectId = "hopeful-text-427709-g2";
         private readonly string _serviceAccountKeyPath = "D:\\Rider\\hopeful-text-427709-g2-b8ed2fc88a61.json";
 
-        public ProductController(StoreDbContext context)
+        public ProductController(StoreDbContext context, IUserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         [HttpGet("GetAllProduct")]
@@ -43,8 +46,8 @@ namespace SellMarket.Controllers
         [HttpGet("GetProductCategory")]
         public async Task<List<ProductCategoryInfo>> GetProductCategory()
         {
-            //var Email = User.Claims.First(i => i.Type == ClaimTypes.Email).Value;
-            //Console.WriteLine("User with email:"+ Email + " Try to get product category");
+            // var Email = User.Claims.First(i => i.Type == ClaimTypes.Email).Value;
+            // Console.WriteLine("User with email:"+ Email + " Try to get product category");
             var productCategories = await _context.ProductCategories.Where(x => x.ParentCategoryId == null).ToListAsync();
             return productCategories.Select(ProductMapper.MapToProductCategoryInfo).ToList();
         }   
@@ -183,9 +186,13 @@ namespace SellMarket.Controllers
         }
 
         [HttpGet("GetUserPosts")]
-        public async Task<List<ProductInfo>> GetUserPosts(int id)
+        [Authorize]
+        public async Task<List<ProductInfo>> GetUserPosts()
         {
-            var product = await _context.Products.Where(x => x.SellerId == id).ToListAsync();
+            var userEmail = _userService.GetMyEmail();
+            Console.WriteLine(userEmail);
+            var userId = _context.Users.Where(x => x.UserEmail == userEmail).Select(x => x.Id).FirstOrDefault();
+            var product = await _context.Products.Where(x => x.SellerId == userId).ToListAsync();
             return product.Select(ProductMapper.MapToProductInfo).ToList();
         }
     }
