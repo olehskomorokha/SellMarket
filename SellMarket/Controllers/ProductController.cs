@@ -69,6 +69,13 @@ namespace SellMarket.Controllers
 
             return products;
         }
+
+        [HttpGet("GetAllSubcategory")]
+        public async Task<List<ProductCategoryInfo>> GetAllSubcategory()
+        {
+            var subcategory = await _context.ProductCategories.Where(x => x.ParentCategoryId != null).ToListAsync();
+            return subcategory.Select(ProductMapper.MapToProductCategoryInfo).ToList();
+        }
         [HttpGet("GetSubcategoriesByCategoryId")]
         public async Task<List<ProductCategoryInfo>> GetSubcategoriesByCategoryId(int id)
         {
@@ -133,6 +140,22 @@ namespace SellMarket.Controllers
             var products = await _context.Products.Where(x => x.Title.Contains(keyWord)).ToListAsync();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
+
+        [HttpGet("GetProductById")]
+        public async Task<List<ProductInfo>> GetProductById(int id)
+        {
+            var product = await (from p in _context.Products
+                join pc in _context.ProductCategories on p.ProductCategoryId equals pc.Id
+                join s in _context.Users on p.SellerId equals s.Id
+                where p.Id == id
+                select new
+                {
+                    Product = p,
+                    User = s,
+                    Category = pc
+                }).ToListAsync();
+            return product.Select(p => ProductMapper.MapToAllProductInfo(p.Product, p.User, p.Category)).ToList();
+        }
         [HttpGet("GetAllProductBySubcategoryWithFilterId")]
         public async Task<List<ProductInfo>> GetAllProductBySubcategoryWithFilterId(int id, int? minPrice, int? maxPrice, string? sortType)
         {
@@ -143,7 +166,7 @@ namespace SellMarket.Controllers
                     query = query.OrderBy(x => x.Price);
                     break;
                 case "-price":
-                    query = query.OrderByDescending(x => x.Price);
+                    query = query.OrderByDescending(x => x.Price);  
                     break;
                 case "-date_created":
                     query = query.OrderByDescending(x => x.DateOfPublish);
@@ -169,7 +192,7 @@ namespace SellMarket.Controllers
             var products = await query.ToListAsync();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
-
+        
         [HttpGet("GetProductImg")]
         public async Task<IEnumerable<string>> GetProductImg(int productId)
         {
@@ -189,12 +212,30 @@ namespace SellMarket.Controllers
         [Authorize]
         public async Task<List<ProductInfo>> GetUserPosts()
         {
-            var userEmail = _userService.GetMyEmail();
+            var userEmail = _userService.GetMyEmail();  
             Console.WriteLine(userEmail);
             var userId = _context.Users.Where(x => x.UserEmail == userEmail).Select(x => x.Id).FirstOrDefault();
             var product = await _context.Products.Where(x => x.SellerId == userId).ToListAsync();
             return product.Select(ProductMapper.MapToProductInfo).ToList();
         }
+
+        [HttpDelete("DeleteProduct")]
+        [Authorize]
+        public async Task<ActionResult> DeleteProduct(int productId)
+        {
+            var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
+            var imageUrl = await _context.Products.Where(x => x.Id == productId).Select(x => x.ImgURL).FirstOrDefaultAsync();
+            var imgArray = imageUrl.Split(",");
+            foreach (var img in imgArray)
+            {
+                storageClient.DeleteObject(_bucketName, Path.GetFileName(img));
+            }
+
+            var product = await _context.Products.Where(x => x.Id == productId).FirstAsync();
+            _context.Products.Remove(product);
+            _context.SaveChangesAsync();
+            return Ok(product);
+        }
     }
 
-}
+}   

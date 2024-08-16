@@ -17,6 +17,19 @@ namespace SellMarket.Model.Models
                 Price = product.Price
             };
         }
+        public static ProductInfo MapToAllProductInfo(Product product, User? user, ProductCategory category)
+        {
+            return new ProductInfo
+            {
+                Id = product.Id,
+                Title = product.Title,
+                Img = GetFirstImageUrl(product.ImgURL),
+                Description = product.Description,
+                SellerName = user.NickName, // Use the User object to get the seller's name
+                Category = category.Category, // Use the ProductCategory object to get the category
+                Price = product.Price
+            };
+        }
         private static string GetFirstImageUrl(string imgUrls)
         {
             if (string.IsNullOrEmpty(imgUrls)) return string.Empty;
@@ -32,6 +45,20 @@ namespace SellMarket.Model.Models
                 Category = category.Category
             };
         }
-        
+
+        public static AllProductInfoModel MapToAllProductInfoModel(Product product, User? user, ProductCategory category)
+        {
+            return new AllProductInfoModel
+            {
+                Id = product.Id,
+                Title = product.Title,
+                Img = GetFirstImageUrl(product.ImgURL),
+                DateOfPublish = product.DateOfPublish,
+                Description = product.Description,
+                SellerName = user.NickName, 
+                Category = category.Category,
+                Price = product.Price
+            };
+        }
     }
 }
