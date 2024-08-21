@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using SellMarket.Model.Mappers;
 using SellMarket.Services;
 
 namespace SellMarket.Controllers
@@ -20,6 +21,8 @@ namespace SellMarket.Controllers
     {
         private StoreDbContext _context;
         readonly IConfiguration _configuration;
+        
+        private readonly IUserService _userService;
 
         // private static List<string> _tokenBlacklist = new List<string>();
 
@@ -27,9 +30,9 @@ namespace SellMarket.Controllers
         {
             _context = context;
             _configuration = configuration;
+            _userService = userService;
 
         }
-
 
         [HttpPost("Register")]
         public async Task<ActionResult> Register(UserRegister user)
@@ -110,6 +113,15 @@ namespace SellMarket.Controllers
                     SecurityAlgorithms.HmacSha256));
 
             return new JwtSecurityTokenHandler().WriteToken(jwt);
+        }
+
+        [HttpGet("getUserInfo")]
+        [Authorize]
+        public List<UserInfoModel> getUserInfo()
+        {
+            var userEmail = _userService.GetMyEmail();
+            var userId = _context.Users.Where(x => x.UserEmail == userEmail).ToList();
+            return userId.Select(UserMapper.MapToUserInfoModel).ToList();
         }
         private string HashPassword(string password)
         {
