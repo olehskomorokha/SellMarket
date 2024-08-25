@@ -65,8 +65,7 @@ namespace SellMarket.Controllers
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                NickName = user.NickName,
+                DateOfRegistration = DateTime.Now,
                 UserEmail = user.Email,
                 Password = hashedPassword
             };

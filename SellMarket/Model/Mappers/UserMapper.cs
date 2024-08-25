@@ -11,10 +11,20 @@ namespace SellMarket.Model.Mappers
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                NickName = user.NickName,
                 Email = user.UserEmail,
                 Password = user.Password
+            };
+        }
+
+        public static UserInfoModel MapToUserInfoModel(User user)
+        {
+            return new UserInfoModel
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                NickName = user.NickName,
+                UserEmail = user.UserEmail,
+                PhoneNumber = user.PhoneNumber
             };
         }
         public static UserLogin MapToUserLogin(User user)
