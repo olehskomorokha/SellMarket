@@ -135,5 +135,36 @@ namespace SellMarket.Controllers
                 return builder.ToString();
             }
         }
+        
+        [HttpPost("addUserAdress")]
+        [Authorize]
+        public ActionResult addUserAdress(UserAdressModel userAddressModel)
+        {
+            var userEmail = _userService.GetMyEmail();
+    
+            var user = _context.Users.FirstOrDefault(x => x.UserEmail == userEmail);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            
+            var userAddress = new UserAdress
+            {
+                Region = userAddressModel.Region,
+                City = userAddressModel.City
+            };
+            _context.UserAdresses.Add(userAddress);
+            _context.SaveChanges();
+            
+            user.UserAdressId = userAddress.Id;
+            user.NickName = userAddressModel.NickName;
+    
+            
+            
+            _context.Users.Update(user);
+            _context.SaveChanges();
+    
+            return Ok();
+        }
     }
 }
