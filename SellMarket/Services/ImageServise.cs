@@ -5,19 +5,15 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Upload;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using SellMarket.Model.Data;
 
-namespace SellMarket.Controllers
+namespace SellMarket.Services
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class StorageController : ControllerBase
+    public class ImageServise : IImageServise
     {
         private readonly string[] Scopes = { DriveService.Scope.DriveFile };
         private const string ApplicationName = "SellMarkedDrive";
-        private StoreDbContext _context;
-        private readonly DriveService _driveService;
         private string clientId = "839467600642-nerc54ibpgo8bpak15m0pudpsi6jnrjr.apps.googleusercontent.com";
         private string clientSecret = "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";
 
@@ -25,7 +21,7 @@ namespace SellMarket.Controllers
             "1//043Dc5-PDLeq-CgYIARAAGAQSNwF-L9Ir9iSO1MvDC85uFBLeVTmEMJ1BMU6rN2LZmJR-is7n9UgU1FXFCGIJg0CY5fOiAS-hHgs";
 
         private string fileId = "https://drive.google.com/drive/u/0/folders/1gaFnJOev8WcmG61NpnY9YVNxlzGtG_xB";
-        
+            
         private DriveService GetDriveService()
         {
             var token = new TokenResponse { RefreshToken = refresh_token };
@@ -48,17 +44,12 @@ namespace SellMarket.Controllers
                 ApplicationName = ApplicationName
             });
         }
-        public StorageController(StoreDbContext context)
+        public async Task<string> UploadFile(IFormFileCollection files)
         {
-            _context = context;
-        }
-
-        [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(IFormFileCollection files)
-        {
+            
             if (files == null || files.Count == 0)
             {
-                return BadRequest("No file uploaded.");
+                return "No file uploaded.";
             }
 
             try
@@ -91,33 +82,27 @@ namespace SellMarket.Controllers
                         await driveService.Permissions.Create(permission, fileId).ExecuteAsync();
 
                         // Return the public URL
-                        
+
                         var fileUrl = $"https://drive.google.com/uc?id={fileId}&export";
                         fileUrls.Add(fileUrl);
 
                     }
                     else
                     {
-                        return StatusCode(500, "File upload failed.");
+                        return "File upload failed.";
                     }
-                    
+
                 }
+
                 // Join the URLs into a single string separated by commas
                 string result = string.Join(",", fileUrls);
-                return Ok(result);
+                return result;
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return ex.Message;
             }
         }
     }
-        
-
-
-            // private readonly string _bucketName = "sellmarketstorage";
-            // private readonly string _projectId = "hopeful-text-427709-g2";
-            // private readonly string _serviceAccountKeyPath = "D:\\Rider\\hopeful-text-427709-g2-b8ed2fc88a61.json";    
-
 }
 

@@ -63,6 +63,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
+
 //Claim read things
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -72,9 +73,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {
     build.WithOrigins("http://127.0.0.1:5500").AllowAnyMethod().AllowAnyHeader();
+    build.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
 }));
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+// configuring services
+builder.Services.AddControllers();
+builder.Services.AddScoped<IImageServise, ImageServise>();
+
 
 var app = builder.Build();
 

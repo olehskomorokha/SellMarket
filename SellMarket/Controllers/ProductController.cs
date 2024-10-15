@@ -15,15 +15,17 @@ namespace SellMarket.Controllers
     public class ProductController : Controller
     {
         private StoreDbContext _context;
+        private readonly IImageServise _ImageService;
         private readonly IUserService _userService;
         
         // bucket configuring property
         private readonly string _bucketName = "sellmarketstorage";
         // private readonly string _projectId = "hopeful-text-427709-g2";
-        private readonly string _serviceAccountKeyPath = "D:\\Rider\\hopeful-text-427709-g2-b8ed2fc88a61.json";
+        private readonly string _serviceAccountKeyPath = "C:\\Users\\olegs\\Downloads\\hopeful-text-427709-g2-9a28e43ba209.json";
 
-        public ProductController(StoreDbContext context, IUserService userService)
+        public ProductController(StoreDbContext context, IUserService userService, IImageServise ImageService)
         {
+            _ImageService = ImageService;
             _context = context;
             _userService = userService;
         }
@@ -88,22 +90,24 @@ namespace SellMarket.Controllers
         [Authorize]
         public async Task<ActionResult> AddProduct([FromForm] AddProductModel productInfo, [FromForm] IFormFileCollection files)
         {
-            // image store state
-            var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
-            var fileUrls = new List<string>();
-
-            foreach (var file in files)
-            {
-                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                using (var stream = file.OpenReadStream())
-                {
-                    await storageClient.UploadObjectAsync(_bucketName, uniqueFileName, file.ContentType, stream);
-                }   
-
-                var fileUrl = $"https://storage.googleapis.com/{_bucketName}/{uniqueFileName}";
-                fileUrls.Add(fileUrl);
-            }
             
+            // image store for backet state
+            // var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
+            // var fileUrls = new List<string>();
+            //
+            // foreach (var file in files)
+            // {
+            //     var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            //     using (var stream = file.OpenReadStream())
+            //     {
+            //         await storageClient.UploadObjectAsync(_bucketName, uniqueFileName, file.ContentType, stream);
+            //     }   
+            //
+            //     var fileUrl = $"https://storage.googleapis.com/{_bucketName}/{uniqueFileName}";
+            //     fileUrls.Add(fileUrl);
+            // }
+            //
+            var imgUrl = await _ImageService.UploadFile(files);
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
 
             if (string.IsNullOrEmpty(email))
@@ -124,7 +128,7 @@ namespace SellMarket.Controllers
                 Description = productInfo.Description,
                 SellerId = user.Id,
                 DateOfPublish = DateTime.Now,
-                ImgURL = string.Join(",", fileUrls),
+                ImgURL = imgUrl,
                 ProductCategoryId = productInfo.Category,
                 Price = productInfo.Price,
             };
@@ -134,7 +138,7 @@ namespace SellMarket.Controllers
 
             return Ok(newProduct);
         }
-
+        
         [HttpGet("GetProductByTitle")]
         public async Task<List<ProductInfo>> GetProductByTitle(string keyWord)
         {
@@ -237,6 +241,22 @@ namespace SellMarket.Controllers
             _context.SaveChangesAsync();
             return Ok(product);
         }
+
+        [HttpPut("UpdateProduct")]
+        [Authorize]
+        public IActionResult UpdateProduct(ProductInfo product)
+        {
+            var productFor = _context.Products.FirstOrDefault(x => x.Id == product.Id);
+            productFor.Title = product.Title;
+            productFor.Description = product.Description;
+            productFor.Price = product.Price;
+            productFor.ImgURL = product.Img;
+            _context.Products.Update(productFor);
+            _context.SaveChanges();
+            return Ok(productFor);
+        }
+        
+         
     }
 
 }   
