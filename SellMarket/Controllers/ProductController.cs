@@ -145,6 +145,20 @@ namespace SellMarket.Controllers
             var products = await _context.Products.Where(x => x.Title.Contains(keyWord)).ToListAsync();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
+        [HttpGet("GetProducts")]
+        public async Task<List<AllProductInfoModel>> GetProducts()
+        {
+            var product = await (from p in _context.Products
+                join pc in _context.ProductCategories on p.ProductCategoryId equals pc.Id
+                join s in _context.Users on p.SellerId equals s.Id
+                select new
+                {
+                    Product = p,
+                    User = s,
+                    Category = pc
+                }).ToListAsync();
+            return product.Select(p => ProductMapper.MapToAllProductInfoModel(p.Product, p.User, p.Category)).ToList();
+        }
 
         [HttpGet("GetProductById")]
         public async Task<List<AllProductInfoModel>> GetProductById(int id)

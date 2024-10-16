@@ -83,7 +83,7 @@ namespace SellMarket.Services
 
                         // Return the public URL
 
-                        var fileUrl = $"https://drive.google.com/uc?id={fileId}&export";
+                        var fileUrl = $"https://drive.google.com/thumbnail?id={fileId}";
                         fileUrls.Add(fileUrl);
 
                     }
@@ -103,6 +103,7 @@ namespace SellMarket.Services
                 return ex.Message;
             }
         }
+ 
     }
 }
 
