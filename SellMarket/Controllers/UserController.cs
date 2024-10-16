@@ -8,7 +8,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using SellMarket.Exeption;
 using Microsoft.AspNetCore.Authorization;
 using SellMarket.Model.Mappers;
 using SellMarket.Services;
@@ -139,7 +138,7 @@ namespace SellMarket.Controllers
         
         [HttpPost("addUserAdress")]
         [Authorize]
-        public ActionResult addUserAdress(UserMainInfoModel userMainModel)
+        public ActionResult addUserAdress(UserAdressModel userAddressModel)
         {
             var userEmail = _userService.GetMyEmail();
     
@@ -151,19 +150,15 @@ namespace SellMarket.Controllers
             
             var userAddress = new UserAdress
             {
-                Region = userMainModel.Address,
-                City = userMainModel.Address
+                Region = userAddressModel.Region,
+                City = userAddressModel.City
             };
             _context.UserAdresses.Add(userAddress);
             _context.SaveChanges();
-
-            if (user.UserAdressId != null)
-            {
-                throw new UserException("User already have Adress");
-            }
+            
             user.UserAdressId = userAddress.Id;
-            user.NickName = userMainModel.NickName;
-            user.PhoneNumber = userMainModel.Phone;
+            user.NickName = userAddressModel.NickName;
+    
             
             
             _context.Users.Update(user);

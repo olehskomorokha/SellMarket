@@ -1,8 +1,8 @@
 ﻿namespace SellMarket.Model.Models;
 
-public class UserMainInfoModel
+public class UserAdressModel
 {
     public string NickName { get; set; }
-    public string Address { get; set; }
-    public string Phone { get; set; }
+    public string Region { get; set; }
+    public string City { get; set; }
 }
