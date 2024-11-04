@@ -3,10 +3,10 @@ using SellMarket.Model.Data;
 using SellMarket.Model.Entities;
 using Microsoft.EntityFrameworkCore;
 using SellMarket.Model.Models;
+using SellMarket.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Google.Cloud.Storage.V1;
-using SellMarket.Services;
 
 namespace SellMarket.Controllers
 {
@@ -16,18 +16,19 @@ namespace SellMarket.Controllers
     {
         private StoreDbContext _context;
         private readonly IUserService _userService;
+        private readonly IImageService _imageService;
         
         // bucket configuring property
         private readonly string _bucketName = "sellmarketstorage";
         // private readonly string _projectId = "hopeful-text-427709-g2";
         private readonly string _serviceAccountKeyPath = "D:\\Rider\\hopeful-text-427709-g2-b8ed2fc88a61.json";
 
-        public ProductController(StoreDbContext context, IUserService userService)
+        public ProductController(StoreDbContext context, IUserService userService, IImageService imageService)
         {
             _context = context;
             _userService = userService;
+            _imageService = imageService;
         }
-
         [HttpGet("GetAllProduct")]
         public async Task<List<ProductInfo>> GetAll()
         {
@@ -88,22 +89,23 @@ namespace SellMarket.Controllers
         [Authorize]
         public async Task<ActionResult> AddProduct([FromForm] AddProductModel productInfo, [FromForm] IFormFileCollection files)
         {
-            // image store state
-            var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
-            var fileUrls = new List<string>();
-
-            foreach (var file in files)
-            {
-                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                using (var stream = file.OpenReadStream())
-                {
-                    await storageClient.UploadObjectAsync(_bucketName, uniqueFileName, file.ContentType, stream);
-                }   
-
-                var fileUrl = $"https://storage.googleapis.com/{_bucketName}/{uniqueFileName}";
-                fileUrls.Add(fileUrl);
-            }
-            
+            // // image store state
+            // var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
+            // var fileUrls = new List<string>();
+            //
+            // foreach (var file in files)
+            // {
+            //     var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            //     using (var stream = file.OpenReadStream())
+            //     {
+            //         await storageClient.UploadObjectAsync(_bucketName, uniqueFileName, file.ContentType, stream);
+            //     }   
+            //
+            //     var fileUrl = $"https://storage.googleapis.com/{_bucketName}/{uniqueFileName}";
+            //     fileUrls.Add(fileUrl);
+            // }
+            //
+            string imgUrls = await _imageService.UploadFile(files);
             var email = User.FindFirst(ClaimTypes.Email)?.Value;
 
             if (string.IsNullOrEmpty(email))
@@ -124,7 +126,7 @@ namespace SellMarket.Controllers
                 Description = productInfo.Description,
                 SellerId = user.Id,
                 DateOfPublish = DateTime.Now,
-                ImgURL = string.Join(",", fileUrls),
+                ImgURL =  imgUrls,
                 ProductCategoryId = productInfo.Category,
                 Price = productInfo.Price,
             };
