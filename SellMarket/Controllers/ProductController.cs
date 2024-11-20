@@ -36,7 +36,7 @@ namespace SellMarket.Controllers
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
 
-        [HttpGet("GetAllProductBySubcategoryId")]
+        [HttpGet("GetProductsBySubcategoryId")]
         [ProducesResponseType(typeof(Product), 200)] // Specify the expected response type
         public async Task<List<ProductInfo>> GetAllProductBySubcategoryId(int id)
         {
@@ -47,95 +47,75 @@ namespace SellMarket.Controllers
         [HttpGet("GetProductCategory")]
         public async Task<List<ProductCategoryInfo>> GetProductCategory()
         {
-            // var Email = User.Claims.First(i => i.Type == ClaimTypes.Email).Value;
-            // Console.WriteLine("User with email:"+ Email + " Try to get product category");
-            var productCategories = await _context.ProductCategories.Where(x => x.ParentCategoryId == null).ToListAsync();
+            var productCategories = await _context.ProductCategories.Where(x => x.ParentCategoryId == null || x.ParentCategoryId == x.Id).ToListAsync();
             return productCategories.Select(ProductMapper.MapToProductCategoryInfo).ToList();
-        }   
-
-        [HttpGet("GetProductsByCategoryId")]
-        public async Task<List<ProductInfo>> GetProductByCategoryId(int id)
-        {
-            var products = await (from p in _context.Products
-                join pc in _context.ProductCategories on p.ProductCategoryId equals pc.Id
-                where pc.ParentCategoryId == id
-                select new ProductInfo 
-                { 
-                    Title = p.Title, 
-                    Description = p.Description, 
-                    SellerName = p.Seller.NickName, 
-                    Category = pc.Category, 
-                    Price = p.Price 
-                }).ToListAsync();
-
-            return products;
-        }
+        }  
 
         [HttpGet("GetAllSubcategory")]
         public async Task<List<ProductCategoryInfo>> GetAllSubcategory()
         {
-            var subcategory = await _context.ProductCategories.Where(x => x.ParentCategoryId != null).ToListAsync();
+            var subcategory = await _context.ProductCategories.Where(x => x.ParentCategoryId != x.Id && x.ParentCategoryId != null).ToListAsync();
             return subcategory.Select(ProductMapper.MapToProductCategoryInfo).ToList();
         }
         [HttpGet("GetSubcategoriesByCategoryId")]
         public async Task<List<ProductCategoryInfo>> GetSubcategoriesByCategoryId(int id)
         {
-            var subcategory = await _context.ProductCategories.Where(x => x.ParentCategoryId == id).ToListAsync();
+            var subcategory = await _context.ProductCategories.Where(x => x.ParentCategoryId == id && x.ParentCategoryId != x.Id && x.ParentCategoryId != null).ToListAsync();
             return subcategory.Select(ProductMapper.MapToProductCategoryInfo).ToList();
         }
         
         
-        [HttpPost("addProduct")]
-        [Authorize]
-        public async Task<ActionResult> AddProduct([FromForm] AddProductModel productInfo, [FromForm] IFormFileCollection files)
-        {
-            // // image store state
-            // var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
-            // var fileUrls = new List<string>();
-            //
-            // foreach (var file in files)
-            // {
-            //     var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            //     using (var stream = file.OpenReadStream())
-            //     {
-            //         await storageClient.UploadObjectAsync(_bucketName, uniqueFileName, file.ContentType, stream);
-            //     }   
-            //
-            //     var fileUrl = $"https://storage.googleapis.com/{_bucketName}/{uniqueFileName}";
-            //     fileUrls.Add(fileUrl);
-            // }
-            //
-            string imgUrls = await _imageService.UploadFile(files);
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-
-            if (string.IsNullOrEmpty(email))
+            [HttpPost("addProduct")]
+            [Authorize]
+            public async Task<ActionResult> AddProduct([FromForm] AddProductModel productInfo, [FromForm] IFormFileCollection files)
             {
-                return Unauthorized();
+                // // image store state
+                // var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
+                // var fileUrls = new List<string>();
+                //
+                // foreach (var file in files)
+                // {
+                //     var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                //     using (var stream = file.OpenReadStream())
+                //     {
+                //         await storageClient.UploadObjectAsync(_bucketName, uniqueFileName, file.ContentType, stream);
+                //     }   
+                //
+                //     var fileUrl = $"https://storage.googleapis.com/{_bucketName}/{uniqueFileName}";
+                //     fileUrls.Add(fileUrl);
+                // }
+                //
+                string imgUrls = await _imageService.UploadFile(files);
+                var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+                if (string.IsNullOrEmpty(email))
+                {
+                    return Unauthorized();
+                }
+                
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == email);
+                
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+
+                var newProduct = new Product
+                {
+                    Title = productInfo.Title,
+                    Description = productInfo.Description,
+                    SellerId = user.Id,
+                    DateOfPublish = DateTime.Now,
+                    ImgURL =  imgUrls,
+                    ProductCategoryId = productInfo.Category,
+                    Price = productInfo.Price,
+                };
+
+                _context.Products.Add(newProduct);
+                await _context.SaveChangesAsync();
+
+                return Ok(newProduct);
             }
-            
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == email);
-            
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-
-            var newProduct = new Product
-            {
-                Title = productInfo.Title,
-                Description = productInfo.Description,
-                SellerId = user.Id,
-                DateOfPublish = DateTime.Now,
-                ImgURL =  imgUrls,
-                ProductCategoryId = productInfo.Category,
-                Price = productInfo.Price,
-            };
-
-            _context.Products.Add(newProduct);
-            await _context.SaveChangesAsync();
-
-            return Ok(newProduct);
-        }
 
         [HttpGet("GetProductByTitle")]
         public async Task<List<ProductInfo>> GetProductByTitle(string keyWord)
@@ -143,22 +123,8 @@ namespace SellMarket.Controllers
             var products = await _context.Products.Where(x => x.Title.Contains(keyWord)).ToListAsync();
             return products.Select(ProductMapper.MapToProductInfo).ToList();
         }
-        [HttpGet("GetProducts")]
-        public async Task<List<AllProductInfoModel>> GetProducts()
-        {
-            var product = await (from p in _context.Products
-                join pc in _context.ProductCategories on p.ProductCategoryId equals pc.Id
-                join s in _context.Users on p.SellerId equals s.Id
-                select new
-                {
-                    Product = p,
-                    User = s,
-                    Category = pc
-                }).ToListAsync();
-            return product.Select(p => ProductMapper.MapToAllProductInfoModel(p.Product, p.User, p.Category)).ToList();
-        }
 
-        [HttpGet("GetProductById")]
+        [HttpGet("GetProductsById")]
         public async Task<List<AllProductInfoModel>> GetProductById(int id)
         {
             var product = await (from p in _context.Products
@@ -173,7 +139,7 @@ namespace SellMarket.Controllers
                 }).ToListAsync();
             return product.Select(p => ProductMapper.MapToAllProductInfoModel(p.Product, p.User, p.Category)).ToList();
         }
-        [HttpGet("GetAllProductBySubcategoryWithFilterId")]
+        [HttpGet("GetProductsBySubcategoryWithFilterId")]
         public async Task<List<ProductInfo>> GetAllProductBySubcategoryWithFilterId(int id, int? minPrice, int? maxPrice, string? sortType)
         {
             var query = _context.Products.Include(x => x.Category).AsQueryable();
