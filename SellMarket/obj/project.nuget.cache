@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Yr54SLlrRoI=",
+  "dgSpecHash": "92yfQKxpt1s=",
   "success": true,
   "projectFilePath": "C:\\Users\\olegs\\source\\repos\\SellMarket\\SellMarket\\SellMarket.csproj",
   "expectedPackageFiles": [
@@ -8,9 +8,10 @@
     "C:\\Users\\olegs\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
     "C:\\Users\\olegs\\.nuget\\packages\\google.api.gax\\4.8.0\\google.api.gax.4.8.0.nupkg.sha512",
     "C:\\Users\\olegs\\.nuget\\packages\\google.api.gax.rest\\4.8.0\\google.api.gax.rest.4.8.0.nupkg.sha512",
-    "C:\\Users\\olegs\\.nuget\\packages\\google.apis\\1.67.0\\google.apis.1.67.0.nupkg.sha512",
-    "C:\\Users\\olegs\\.nuget\\packages\\google.apis.auth\\1.67.0\\google.apis.auth.1.67.0.nupkg.sha512",
-    "C:\\Users\\olegs\\.nuget\\packages\\google.apis.core\\1.67.0\\google.apis.core.1.67.0.nupkg.sha512",
+    "C:\\Users\\olegs\\.nuget\\packages\\google.apis\\1.68.0\\google.apis.1.68.0.nupkg.sha512",
+    "C:\\Users\\olegs\\.nuget\\packages\\google.apis.auth\\1.68.0\\google.apis.auth.1.68.0.nupkg.sha512",
+    "C:\\Users\\olegs\\.nuget\\packages\\google.apis.core\\1.68.0\\google.apis.core.1.68.0.nupkg.sha512",
+    "C:\\Users\\olegs\\.nuget\\packages\\google.apis.drive.v3\\1.68.0.3568\\google.apis.drive.v3.1.68.0.3568.nupkg.sha512",
     "C:\\Users\\olegs\\.nuget\\packages\\google.apis.storage.v1\\1.67.0.3365\\google.apis.storage.v1.1.67.0.3365.nupkg.sha512",
     "C:\\Users\\olegs\\.nuget\\packages\\google.cloud.storage.v1\\4.10.0\\google.cloud.storage.v1.4.10.0.nupkg.sha512",
     "C:\\Users\\olegs\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

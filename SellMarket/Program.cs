@@ -67,10 +67,16 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserService, UserService>();
 
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IImageService, ImageService>();
+
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {
+    build.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+    build.WithOrigins("http://192.168.56.1:3000").AllowAnyMethod().AllowAnyHeader();
     build.WithOrigins("http://127.0.0.1:5500").AllowAnyMethod().AllowAnyHeader();
 }));
 

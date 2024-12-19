@@ -46,6 +46,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Google.Apis.Drive.v3": {
+              "target": "Package",
+              "version": "[1.68.0.3568, )"
+            },
             "Google.Cloud.Storage.V1": {
               "target": "Package",
               "version": "[4.10.0, )"
