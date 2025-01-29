@@ -154,3 +154,6 @@ C:\Users\olegs\source\repos\SellMarket\SellMarket\bin\Debug\net8.0\Newtonsoft.Js
 C:\Users\olegs\source\repos\SellMarket\SellMarket\bin\Debug\net8.0\System.Management.dll
 C:\Users\olegs\source\repos\SellMarket\SellMarket\bin\Debug\net8.0\runtimes\win\lib\net7.0\System.Management.dll
 C:\Users\olegs\source\repos\SellMarket\SellMarket\bin\Debug\net8.0\Google.Apis.Drive.v3.dll
+C:\Users\olegs\source\repos\SellMarket\SellMarket\bin\Debug\net8.0\SellMarket.staticwebassets.endpoints.json
+C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\olegs\source\repos\SellMarket\SellMarket\obj\Debug\net8.0\staticwebassets\msbuild.SellMarket.Microsoft.AspNetCore.StaticWebAssetEndpoints.props

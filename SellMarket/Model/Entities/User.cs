@@ -8,8 +8,6 @@ namespace SellMarket.Model.Entities
     {
         [Key]
         public int Id { get; set; }
-        [AllowNull]
-        public int? UserAdressId { get; set; }
 
         public string FirstName { get; set; }
 
@@ -22,11 +20,11 @@ namespace SellMarket.Model.Entities
 
         public string UserEmail { get; set; }
         [AllowNull]
+        public string? Address { get; set; }
+        [AllowNull]
 
         public string? PhoneNumber { get; set; }
 
-        // Navigation properties
-        public virtual UserAdress UserAdress { get; set; }
 
         public ICollection<Product> Products { get; set; }
     }

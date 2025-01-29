@@ -5,13 +5,12 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Upload;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace SellMarket.Services
 {
     public class ImageService : IImageService
     {
+
         public ImageService(IConfiguration configuration)
         {
             _clientId = configuration["GoogleDriveApi:ClientId"];
@@ -19,6 +18,7 @@ namespace SellMarket.Services
             _refresh_token = configuration["GoogleDriveApi:refresh_token"];
             _folderId = configuration["GoogleDriveApi:folderId"];
         }
+
         private string _clientId;
         private string _clientSecret;
         private string _refresh_token;
@@ -48,6 +48,7 @@ namespace SellMarket.Services
                 ApplicationName = ApplicationName
             });
         }
+
         public async Task<string> UploadFile(IFormFileCollection files)
         {
             var fileId = string.Empty;
@@ -60,7 +61,7 @@ namespace SellMarket.Services
             {
                 var driveService = GetDriveService();
                 var fileUrls = new List<string>();
-                // Metadata for the file
+
                 foreach (var file in files)
                 {
                     var fileMetadata = new Google.Apis.Drive.v3.Data.File()
@@ -79,7 +80,7 @@ namespace SellMarket.Services
                     {
                         fileId = request.ResponseBody.Id;
 
-                        // Set the file permission to make it public
+
                         var permission = new Permission()
                         {
                             Role = "reader",
@@ -87,7 +88,7 @@ namespace SellMarket.Services
                         };
                         await driveService.Permissions.Create(permission, fileId).ExecuteAsync();
 
-                        // Construct the public URL
+
                         var fileUrl = $"https://drive.google.com/thumbnail?id={fileId}";
                         fileUrls.Add(fileUrl);
                     }
@@ -96,13 +97,35 @@ namespace SellMarket.Services
                         throw progress.Exception;
                     }
                 }
-                // Join the URLs into a single string separated by commas
-                return string.Join(",", fileUrls); ;
+
+                return string.Join(",", fileUrls);
+                ;
             }
             catch (Exception ex)
             {
                 return $"Error: {ex.Message}";
             }
+        }
+
+        public async Task<string> DeleteFile(string url)
+        {
+            var ids = url.Split(',')
+                .Select(s => s.Split("id=")[1])
+                .ToList();
+            foreach (var id in ids)
+            {
+                try
+                {
+                    var driveService = GetDriveService();
+                    await driveService.Files.Delete(id).ExecuteAsync();
+                }
+                catch (Exception ex)
+                {
+                    return $"Помилка видалення: {ex.Message}";
+                }
+
+            }
+            return "Файли успішно видалено";
         }
     }
 }

@@ -65,12 +65,12 @@ builder.Services.AddEndpointsApiExplorer();
 
 //Claim read things
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
-
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IImageService, ImageService>();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>

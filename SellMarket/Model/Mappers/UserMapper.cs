@@ -23,6 +23,8 @@ namespace SellMarket.Model.Mappers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 NickName = user.NickName,
+                DateOfRegistration = user.DateOfRegistration,
+                Address = user.Address,
                 UserEmail = user.UserEmail,
                 PhoneNumber = user.PhoneNumber
             };

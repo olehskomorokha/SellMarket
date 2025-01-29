@@ -1,11 +1,12 @@
 {
   "Version": 1,
-  "Hash": "Io5Vy6DQp8kfFZ3S2JXzHDlUU35gIvdxm6ZJ1CwG1+Q=",
+  "Hash": "V35F5Mply+xWoegWw/HiPHOzaELbAd8qP4FS3FnTDdA=",
   "Source": "SellMarket",
   "BasePath": "_content/SellMarket",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }

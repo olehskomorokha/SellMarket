@@ -12,6 +12,7 @@ namespace SellMarket.Model.Models
                 Title = product.Title,
                 Img = GetFirstImageUrl(product.ImgURL),
                 Description = product.Description,
+                DateOfPublish = product.DateOfPublish,
                 SellerName = product.Seller?.NickName,
                 Category = product.Category?.Category,
                 Price = product.Price

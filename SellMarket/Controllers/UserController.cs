@@ -1,15 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using SellMarket.Model.Data;
-using SellMarket.Model.Entities;
 using SellMarket.Model.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
-using SellMarket.Model.Mappers;
 using SellMarket.Services;
 
 namespace SellMarket.Controllers
@@ -19,17 +10,10 @@ namespace SellMarket.Controllers
  
     public class UserController : Controller
     {
-        private StoreDbContext _context;
-        readonly IConfiguration _configuration;
         
         private readonly IUserService _userService;
-
-        // private static List<string> _tokenBlacklist = new List<string>();
-
-        public UserController (StoreDbContext context, IConfiguration configuration, IUserService userService)
+        public UserController(IUserService userService)
         {
-            _context = context;
-            _configuration = configuration;
             _userService = userService;
 
         }
@@ -37,134 +21,27 @@ namespace SellMarket.Controllers
         [HttpPost("Register")]
         public async Task<ActionResult> Register(UserRegister user)
         {
-            if (user == null)
-            {
-                return BadRequest("User data is null.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName) ||
-                string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
-            {
-                return BadRequest("Missing required user information.");
-            }
-
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == user.Email);
-            if (existingUser != null)
-            {
-                return BadRequest("Email is already in use.");
-            }
-
-            var hashedPassword = HashPassword(user.Password);
-
-            var newUser = new User
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                DateOfRegistration = DateTime.Now,
-                UserEmail = user.Email,
-                Password = hashedPassword
-            };
-
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-
-            return Ok(newUser);
+            return Ok(await _userService.Register(user));
         }
 
         [HttpPost("login")]
         public async Task<ActionResult> Login(UserLogin user)
         {
-            var userPassword = await _context.Users.FirstOrDefaultAsync(x => x.Password == HashPassword(user.Password));
-            var userEmail = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == user.Email);
-            if (userPassword == null) 
-            {
-                return BadRequest("Passworld incorrect");
-            }
-            if (userEmail == null)
-            {
-                return BadRequest("Email incorrect");
-            }
-            var token = GetAccessToken(user.Email, user.Password);
-            return Ok(token);
-        }
-
-        
-        [HttpPost("GetAccessToken")]
-        public string GetAccessToken(string email, string password)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, email), 
-                new Claim(ClaimTypes.Sid, password)
-            };
-            var jwt = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromDays(60)),
-                signingCredentials: new SigningCredentials(new SymmetricSecurityKey
-                        (Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
-                    SecurityAlgorithms.HmacSha256));
-
-            return new JwtSecurityTokenHandler().WriteToken(jwt);
+            return Ok(await _userService.Login(user));
         }
 
         [HttpGet("getUserInfo")]
         [Authorize]
-        public List<UserInfoModel> getUserInfo()
+        public UserInfoModel GetUserInfo()
         {
-            var userEmail = _userService.GetMyEmail();
-            var userId = _context.Users.Where(x => x.UserEmail == userEmail).ToList();
-            return userId.Select(UserMapper.MapToUserInfoModel).ToList();
+            return _userService.GetUserInfo();
         }
-        private string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                var builder = new StringBuilder();
-                foreach (var b in bytes)
-                {
-                    builder.Append(b.ToString("x2"));
-                }
-                return builder.ToString();
-            }
-        }
-        
-        [HttpPost("addUserAdress")]
+       
+        [HttpPut("addUserAddress")]
         [Authorize]
-        public ActionResult addUserAdress(UserAdressModel userAddressModel)
+        public async Task<ActionResult> AddUserAddress(UserContactModel userContactModel)
         {
-            var userEmail = _userService.GetMyEmail();
-    
-            var user = _context.Users.FirstOrDefault(x => x.UserEmail == userEmail);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            
-            var userAddress = new UserAdress
-            {
-                Region = userAddressModel.Region,
-                City = userAddressModel.City
-            };
-            _context.UserAdresses.Add(userAddress);
-            _context.SaveChanges();
-            
-            user.UserAdressId = userAddress.Id;
-            user.NickName = userAddressModel.NickName;
-    
-            
-            
-            _context.Users.Update(user);
-            _context.SaveChanges();
-    
-            return Ok();
+            return Ok(await _userService.AddUserAddress(userContactModel));
         }
     }
 }
