@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SellMarket.Exeptions;
 using SellMarket.Model.Data;
 using SellMarket.Model.Entities;
 using SellMarket.Model.Mappers;
@@ -22,6 +23,76 @@ namespace SellMarket.Services
             _configuration = configuration;
             _context = context; 
             _httpContextAccessor = httpContextAccessor;
+        }
+        
+        
+        
+        
+        // Crud
+        public async Task<List<User>> GetAll()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
+        public async Task<User> GetById(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                throw new MarketExeption("user not found");
+            }
+            return user;
+        }
+
+        public async Task<User> Create(User product)
+        {
+            var newUser = await _context.Users.AddAsync(product);
+            await _context.SaveChangesAsync();
+            return newUser.Entity;
+        }
+
+        public async Task Update(User user)
+        {
+            
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Delete(int modelId)
+        {
+            var user = await _context.Users.FindAsync(modelId);
+            if (user != null)
+            {
+                _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new MarketExeption("User not found");
+            }
+        }
+        
+        // /Crud
+
+        public async Task UpdateUserModel(UpdateUserSettingsModel userModel)
+        {
+            var userEmail = GetMyEmail();
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == userEmail);
+            if (user != null)
+            {
+                if(!userModel.FirstName.IsNullOrEmpty() && userModel.FirstName != null)
+                    user.FirstName = userModel.FirstName;
+                if(!userModel.LastName.IsNullOrEmpty() && userModel.LastName != null)
+                    user.LastName= userModel.LastName;
+                if(!userModel.UserEmail.IsNullOrEmpty() && userModel.UserEmail != null)
+                    user.UserEmail = userModel.UserEmail;
+                if(!userModel.PhoneNumber.IsNullOrEmpty())
+                    user.PhoneNumber = userModel.PhoneNumber;
+                _context.Update(user);
+            }
+
+           
+            await _context.SaveChangesAsync();
         }
         public string GetMyEmail()
         {
@@ -85,10 +156,18 @@ namespace SellMarket.Services
             return token;
         }
     
-        public UserInfoModel GetUserInfo()
+        public async Task<UserInfoModel> GetUserInfo()
         {
             var userEmail = GetMyEmail();
-            var user = _context.Users.Where(x => x.UserEmail == userEmail).FirstOrDefault();
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                throw new Exception("User email is null or empty.");
+            }
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == userEmail);
+            if (user == null)
+            {
+                throw new ApplicationException("User not found.");
+            }
             return UserMapper.MapToUserInfoModel(user);
         }
 

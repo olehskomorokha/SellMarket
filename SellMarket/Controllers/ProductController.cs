@@ -91,11 +91,20 @@ namespace SellMarket.Controllers
             return await _productService.GetUserPosts();
         }
 
-        [HttpDelete("DeleteProduct")]
+        [HttpPut("{id}")]
         [Authorize]
-        public async  Task<ActionResult> DeleteProduct(int productId)
+        public async Task<ActionResult> Update(Product product)
         {
-            await _productService.Delete(productId);
+            await _productService.Update(product);
+            return Ok();
+        }
+        
+
+        [HttpDelete("DeleteProduct/{id}")]
+        [Authorize]
+        public async  Task<ActionResult> DeleteProduct(int id)
+        {
+            await _productService.Delete(id);
             return Ok();
         }
     }

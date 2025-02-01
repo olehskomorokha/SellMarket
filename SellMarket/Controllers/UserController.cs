@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SellMarket.Model.Models;
 using Microsoft.AspNetCore.Authorization;
+using SellMarket.Model.Entities;
 using SellMarket.Services;
 
 namespace SellMarket.Controllers
@@ -18,6 +19,17 @@ namespace SellMarket.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<ActionResult> Get()
+        {
+            return Ok(await _userService.GetAll());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetById(int id)
+        {
+            return Ok(await _userService.GetById(id));
+        }
         [HttpPost("Register")]
         public async Task<ActionResult> Register(UserRegister user)
         {
@@ -32,16 +44,30 @@ namespace SellMarket.Controllers
 
         [HttpGet("getUserInfo")]
         [Authorize]
-        public UserInfoModel GetUserInfo()
+        public async Task<ActionResult<UserInfoModel>> GetUserInfo()
         {
-            return _userService.GetUserInfo();
+            return Ok(await _userService.GetUserInfo());
         }
-       
+
+        [HttpGet("getMyEmail")]
+        [Authorize]
+        public string GetMyEmail()
+        {
+            return _userService.GetMyEmail();
+        }
         [HttpPut("addUserAddress")]
         [Authorize]
         public async Task<ActionResult> AddUserAddress(UserContactModel userContactModel)
         {
             return Ok(await _userService.AddUserAddress(userContactModel));
+        }
+
+        [HttpPut("UpdateUserSettings")]
+        [Authorize] 
+        public async Task<ActionResult> Update(UpdateUserSettingsModel user)
+        {
+            await _userService.UpdateUserModel(user);
+            return Ok();
         }
     }
 }
