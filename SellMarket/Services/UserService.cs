@@ -1,9 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
+using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using SellMarket.Exceptions;
 using SellMarket.Exeptions;
 using SellMarket.Model.Data;
 using SellMarket.Model.Entities;
@@ -25,9 +26,6 @@ namespace SellMarket.Services
             _httpContextAccessor = httpContextAccessor;
         }
         
-        
-        
-        
         // Crud
         public async Task<List<User>> GetAll()
         {
@@ -39,7 +37,7 @@ namespace SellMarket.Services
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
-                throw new MarketExeption("user not found");
+                throw new UserNotFoundException();
             }
             return user;
         }
@@ -68,12 +66,11 @@ namespace SellMarket.Services
             }
             else
             {
-                throw new MarketExeption("User not found");
+                throw new UserNotFoundException();
             }
         }
         
         // /Crud
-
         public async Task UpdateUserModel(UpdateUserSettingsModel userModel)
         {
             var userEmail = GetMyEmail();
@@ -91,7 +88,6 @@ namespace SellMarket.Services
                 _context.Update(user);
             }
 
-           
             await _context.SaveChangesAsync();
         }
         public string GetMyEmail()
@@ -121,7 +117,7 @@ namespace SellMarket.Services
             var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == user.Email);
             if (existingUser != null)
             {
-                throw new Exception("User already exists.");
+                throw new UserAlreadyExistException();
             }
 
             var hashedPassword = HashPassword(user.Password);
@@ -142,17 +138,18 @@ namespace SellMarket.Services
 
         public async Task<string> Login(UserLogin user)
         {
-            var userPassword = await _context.Users.FirstOrDefaultAsync(x => x.Password == HashPassword(user.Password));
-            var userEmail = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == user.Email);
-            if (userPassword == null) 
+            var userFromDb = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == user.Email);
+            if (userFromDb == null)
             {
-                throw new ApplicationException("Wrong password");
+                throw new LoginException("invalid Email", "Invalid email format");
             }
-            if (userEmail == null)
+            
+            if (!BCrypt.Net.BCrypt.Verify(user.Password, userFromDb.Password))
             {
-                throw new ApplicationException("Wrong email");
+                throw new LoginException("invalid Password", "Password is incorrect");
             }
-            var token = GetAccessToken(user.Email, user.Password);
+            
+            var token = GetAccessToken(userFromDb.Id, userFromDb.UserEmail);
             return token;
         }
     
@@ -161,12 +158,12 @@ namespace SellMarket.Services
             var userEmail = GetMyEmail();
             if (string.IsNullOrEmpty(userEmail))
             {
-                throw new Exception("User email is null or empty.");
+                throw new IsNullOrEmptyException("isNullOrEmpty", "Email is null or empty");
             }
             var user = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == userEmail);
             if (user == null)
             {
-                throw new ApplicationException("User not found.");
+                throw new UserNotFoundException();
             }
             return UserMapper.MapToUserInfoModel(user);
         }
@@ -178,7 +175,7 @@ namespace SellMarket.Services
             var user = await _context.Users.FirstOrDefaultAsync(x => x.UserEmail == userEmail);
             if (user == null)
             {
-                throw new ArgumentNullException("User does not exist");
+                throw new UserNotFoundException();
             }
             user.NickName = userContactModel.NickName;
             user.Address = userContactModel.Adress;
@@ -191,23 +188,14 @@ namespace SellMarket.Services
         }
         private string HashPassword(string password)
         {
-            using (var sha256 = SHA256.Create())
-            {
-                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                var builder = new StringBuilder();
-                foreach (var b in bytes)
-                {
-                    builder.Append(b.ToString("x2"));
-                }
-                return builder.ToString();
-            }
+            return BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt(12));
         }
-        public string GetAccessToken(string email, string password)
+        public string GetAccessToken(int userId, string email)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, email), 
-                new Claim(ClaimTypes.Sid, password)
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString())
             };
             var jwt = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],

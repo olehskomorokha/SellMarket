@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 var optionsBuilder = builder.Services.AddDbContext<StoreDbContext>(options => 
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DeafaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -69,9 +69,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
-
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 {

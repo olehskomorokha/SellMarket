@@ -2,6 +2,7 @@
 using Google.Cloud.Storage.V1;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SellMarket.Exceptions;
 using SellMarket.Exeptions;
 using SellMarket.Model.Data;
 using SellMarket.Model.Entities;
@@ -14,17 +15,14 @@ public class ProductService : IProductService
     private readonly StoreDbContext _context;
     private readonly IImageService _imageService;
     private readonly IUserService _userService;
+    private readonly IConfiguration _configuration;
 
-    // bucket configuring property
-    private readonly string _bucketName = "sellmarketstorage";
-    // private readonly string _projectId = "hopeful-text-427709-g2";
-    private readonly string _serviceAccountKeyPath = "D:\\Rider\\hopeful-text-427709-g2-b8ed2fc88a61.json";
-    
-    public ProductService(StoreDbContext context, IImageService imageService, IUserService userService)
+    public ProductService(StoreDbContext context, IImageService imageService, IUserService userService, IConfiguration configuration)
     {
         _userService = userService;
         _imageService = imageService;
         _context = context;
+        _configuration = configuration;
     }
     // Crud
     public async Task<List<Product>> GetAll()
@@ -37,7 +35,7 @@ public class ProductService : IProductService
         var product = await _context.Products.FindAsync(id);
         if (product == null)
         {
-            throw new MarketExeption("user not found");
+            throw new MarketException("user not found");
         }
         return product;
     }
@@ -51,7 +49,7 @@ public class ProductService : IProductService
 
     public async Task Update(Product product)
     {
-        if (string.IsNullOrEmpty(product.Title)) throw new MarketExeption("title is empty");
+        if (string.IsNullOrEmpty(product.Title)) throw new MarketException("title is empty");
         _context.Products.Update(product);
         await _context.SaveChangesAsync();
     }
@@ -67,7 +65,7 @@ public class ProductService : IProductService
         }
         else
         {
-            throw new MarketExeption("Product not found");
+            throw new ProductNotFoundException();
         }
     }
     // /Crud
@@ -109,7 +107,7 @@ public class ProductService : IProductService
 
         if (string.IsNullOrEmpty(email))
         {
-            throw new Exception("Email is empty");
+            throw new IsNullOrEmptyException("inNull", "Email is empty.");
         }
                 
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == email);
@@ -172,7 +170,7 @@ public class ProductService : IProductService
                 query = query.OrderByDescending(x => x.DateOfPublish);
                 break;
             default:
-                query = query.OrderBy(x => x.Id); // Assuming "position" means the order of ID or a default order
+                query = query.OrderBy(x => x.Id);
                 break;
         }
         query = query.Where(p => p.ProductCategoryId == id);
@@ -218,12 +216,15 @@ public class ProductService : IProductService
     {
         try
         {
-            var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_serviceAccountKeyPath));
+            var bucketName = _configuration["GoogleCloud:BucketName"];
+            var serviceAccountKeyPath = _configuration["GoogleCloud:ServiceAccountKeyPath"];
+            
+            var storageClient = StorageClient.Create(Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(serviceAccountKeyPath));
             var imageUrl = await _context.Products.Where(x => x.Id == productId).Select(x => x.ImgURL).FirstOrDefaultAsync();
             var imgArray = imageUrl.Split(",");
             foreach (var img in imgArray)
             {
-                storageClient.DeleteObject(_bucketName, Path.GetFileName(img));
+                storageClient.DeleteObject(bucketName, Path.GetFileName(img));
             }
 
             var product = await _context.Products.Where(x => x.Id == productId).FirstAsync();

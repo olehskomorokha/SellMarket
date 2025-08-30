@@ -11,10 +11,6 @@ namespace SellMarket.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
-        // bucket configuring property
-        private readonly string _bucketName = "sellmarketstorage";
-        // private readonly string _projectId = "hopeful-text-427709-g2";
-        private readonly string _serviceAccountKeyPath = "D:\\Rider\\hopeful-text-427709-g2-b8ed2fc88a61.json";
 
         public ProductController(IProductService productService)
         {
@@ -27,7 +23,7 @@ namespace SellMarket.Controllers
         }
 
         [HttpGet("GetProductsBySubcategoryId")]
-        [ProducesResponseType(typeof(Product), 200)] // Specify the expected response type
+        [ProducesResponseType(typeof(Product), 200)]
         public async Task<List<ProductInfo>> GetAllProductsBySubcategoryId(int id)
         {
             return await _productService.GetAllProductsBySubcategoryId(id);
